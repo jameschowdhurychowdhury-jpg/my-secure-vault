@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vault Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<nav class="navbar navbar-dark bg-dark mb-4 shadow-sm">
+    <div class="container">
+        <span class="navbar-brand mb-0 h1">🔐 Private Sorted Vault</span>
+        <a href="{{ url_for('logout') }}" class="btn btn-outline-light btn-sm">Lock Vault</a>
+    </div>
+</nav>
+
+<div class="container mb-5">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }} alert-dismissible fade show shadow-sm" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <div class="row g-4">
+        <div class="col-lg-4">
+            <div class="card p-4 border-0 shadow-sm sticky-top" style="top: 20px; z-index: 100;">
+                <h5 class="card-title text-secondary mb-3">Upload New Item</h5>
+                <form method="POST" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <input class="form-control" type="file" id="formFile" name="file" required>
+                        <div class="form-text">System auto-detects pictures, PDFs, videos, and documents.</div>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Upload to Vault</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <div class="card p-4 border-0 shadow-sm">
+                <h5 class="card-title text-secondary mb-4">Your Categorized Storage</h5>
+                
+                <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                    {% for category in vault_data.keys() %}
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link text-capitalize {% if loop.first %}active{% endif %}" 
+                                id="pill-{{ category }}-tab" 
+                                data-bs-toggle="pill" 
+                                data-bs-target="#pill-{{ category }}" 
+                                type="button" role="tab">
+                            {{ category }} 
+                            <span class="badge bg-secondary ms-1">{{ vault_data[category]|length }}</span>
+                        </button>
+                    </li>
+                    {% endfor %}
+                </ul>
+                
+                <div class="tab-content" id="pills-tabContent">
+                    {% for category, files in vault_data.items() %}
+                    <div class="tab-pane fade {% if loop.first %}show active{% endif %} pt-2" 
+                         id="pill-{{ category }}" role="tabpanel">
+                        
+                        {% if files %}
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>File Name</th>
+                                            <th class="text-end">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for file in files %}
+                                        <tr>
+                                            <td class="text-break">
+                                                {% if category == 'pictures' %}🖼️ 
+                                                {% elif category == 'pdfs' %}📄 
+                                                {% elif category == 'videos' %}🎬 
+                                                {% elif category == 'documents' %}📝 
+                                                {% else %}📦 {% endif %}
+                                                {{ file }}
+                                            </td>
+                                            <td class="text-end">
+                                                <div class="d-inline-flex gap-2">
+                                                    <a href="{{ url_for('download_file', category=category, filename=file) }}" 
+                                                       target="_blank" class="btn btn-sm btn-outline-secondary">View</a>
+                                                    
+                                                    <form action="{{ url_for('delete_file', category=category, filename=file) }}" 
+                                                          method="POST" 
+                                                          onsubmit="return confirm('Are you sure you want to permanently delete this file?');">
+                                                        <button type="submit" class="btn btn-sm btn-outline-danger">Remove</button>
+                                                    </form>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% else %}
+                            <div class="text-center py-5 text-muted bg-light rounded border border-dashed">
+                                <p class="mb-0">No entries under "{{ category.capitalize() }}" section.</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
