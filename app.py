@@ -11,11 +11,14 @@ app.secret_key = os.environ.get('SECRET_KEY', 'super_secret_session_key_change_t
 PASSWORD = "James@2010"  # Your master vault password
 
 # --- BACKBLAZE B2 / S3 CREDENTIALS ---
-# Automatically pulls values from Render's Environment Variables dashboard
 B2_KEY_ID = os.environ.get('B2_KEY_ID')
 B2_APPLICATION_KEY = os.environ.get('B2_APPLICATION_KEY')
 B2_BUCKET_NAME = os.environ.get('B2_BUCKET_NAME')
 B2_ENDPOINT_URL = os.environ.get('B2_ENDPOINT_URL', 'https://s3.us-west-004.backblazeb2.com')
+
+# AUTO-FIX: If the environment variable is missing 'https://', add it automatically
+if B2_ENDPOINT_URL and not B2_ENDPOINT_URL.startswith(('http://', 'https://')):
+    B2_ENDPOINT_URL = f"https://{B2_ENDPOINT_URL}"
 
 # Initialize the S3-compatible client for Backblaze B2 connection
 s3_client = boto3.client(
@@ -25,7 +28,7 @@ s3_client = boto3.client(
     aws_secret_access_key=B2_APPLICATION_KEY
 )
 
-# File extension maps to automatically categorize your files inside the dashboard layout
+# File categories mapping
 SECTIONS = {
     'pictures': ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp'],
     'pdfs': ['.pdf'],
@@ -73,12 +76,9 @@ def dashboard():
         if file:
             filename = secure_filename(file.filename)
             target_section = get_section_for_file(filename)
-            
-            # Formulates the key architecture path inside the cloud bucket
             cloud_storage_key = f"{target_section}/{filename}"
             
             try:
-                # Streams the uploaded file buffer straight onto Backblaze B2 storage
                 s3_client.upload_fileobj(file, B2_BUCKET_NAME, cloud_storage_key)
                 flash(f'"{filename}" safely backed up to {target_section.capitalize()} cloud room!', 'success')
             except ClientError as e:
@@ -86,7 +86,6 @@ def dashboard():
                 
             return redirect(url_for('dashboard'))
 
-    # Fetches your live cloud directory index to map existing items on screen
     vault_data = {'pictures': [], 'pdfs': [], 'videos': [], 'documents': [], 'others': []}
     try:
         response = s3_client.list_objects_v2(Bucket=B2_BUCKET_NAME)
@@ -112,7 +111,6 @@ def download_file(category, filename):
         
     cloud_storage_key = f"{category}/{filename}"
     try:
-        # Generates a temporary, 1-hour secure viewing token link for safe viewing
         file_url = s3_client.generate_presigned_url(
             'get_object',
             Params={'Bucket': B2_BUCKET_NAME, 'Key': cloud_storage_key},
@@ -130,7 +128,6 @@ def delete_file(category, filename):
     
     cloud_storage_key = f"{category}/{filename}"
     try:
-        # Permanently drops the selected file index inside Backblaze B2
         s3_client.delete_object(Bucket=B2_BUCKET_NAME, Key=cloud_storage_key)
         flash(f'"{filename}" permanently destroyed from storage cluster.', 'info')
     except ClientError as e:
@@ -147,7 +144,5 @@ def logout():
 
 
 if __name__ == '__main__':
-    # Dynamically reads the port assigned by Render, defaults to 5000 locally
     port = int(os.environ.get("PORT", 5000))
-    # Binds to 0.0.0.0 to safely accept traffic routed through external web services
     app.run(host='0.0.0.0', port=port)
