@@ -6,12 +6,12 @@ import boto3
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 
 app = Flask(__name__)
-# Replace with a secure key or set it via Render Environment variables
+# Secure key set via environment variables or fallback safely
 app.secret_key = os.environ.get("FLASK_SECRET_KEY", "super-secret-vault-key")
 
 # --- BACKBLAZE B2 CONFIGURATION ---
 B2_BUCKET_NAME = os.environ.get("B2_BUCKET_NAME")
-VAULT_PASSWORD = os.environ.get("VAULT_PASSWORD", "password123")  # Your master password
+VAULT_PASSWORD = os.environ.get("VAULT_PASSWORD", "password123")  # Master gateway password
 
 s3_client = boto3.client(
     's3',
@@ -82,7 +82,7 @@ def index():
                 categories['others'].append(filename)
                 
     except Exception as e:
-        flash(f"Cloud Connection Error: {str(e)}", "danger")
+        flash(f"Error fetching directory index from Cloud: {str(e)}", "danger")
 
     return render_template('index.html', categories=categories)
 
@@ -160,5 +160,9 @@ def download_file(filename):
         flash(f"Could not generate download link: {str(e)}", "danger")
         return redirect(url_for('index'))
 
+# --- FIXED DEPLOYMENT BINDING FOR RENDER ---
 if __name__ == '__main__':
-    app.run(debug=True)
+    # 1. Dynamically read the environment port allocated by Render
+    port = int(os.environ.get("PORT", 5000))
+    # 2. Bind host to 0.0.0.0 so Render's public network router can discover the service
+    app.run(host="0.0.0.0", port=port)
