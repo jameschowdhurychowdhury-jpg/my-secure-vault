@@ -3,34 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Private Vault - Login</title>
+    <title>Vault Authentication</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        body { background-color: #f4f6f9; height: 100vh; display: flex; align-items: center; justify-content: center; }
-        .login-card { width: 100%; max-width: 400px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-radius: 10px; }
+        body { height: 100vh; display: flex; align-items: center; justify-content: center; background-color: #f4f6f9; }
+        .login-card { width: 100%; max-width: 400px; padding: 30px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); background: #fff; }
     </style>
 </head>
 <body>
+    <div class="login-card">
+        <h3 class="text-center mb-2 fw-bold">🔒 Secure Vault</h3>
+        <p class="text-muted text-center small mb-4">Enter master password to access encrypted workspace</p>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-danger p-2 small text-center" role="alert">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
 
-<div class="card login-card p-4 bg-white">
-    <h3 class="text-center mb-4 text-secondary">🔒 Personal Vault</h3>
-    
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        {% for category, message in messages %}
-          <div class="alert alert-{{ category }} py-2 text-center" role="alert">{{ message }}</div>
-        {% endfor %}
-      {% endif %}
-    {% endwith %}
-
-    <form method="POST">
-        <div class="mb-3">
-            <label for="password" class="form-label">Enter Vault Password</label>
-            <input type="password" class="form-control" id="password" name="password" required autofocus>
-        </div>
-        <button type="submit" class="btn btn-dark w-100">Unlock Vault</button>
-    </form>
-</div>
-
+        <form action="{{ url_for('login') }}" method="POST">
+            <div class="mb-3">
+                <input type="password" name="password" class="form-control" placeholder="Master Password" required autofocus>
+            </div>
+            <button type="submit" class="btn btn-primary w-100 fw-medium">Unlock Vault</button>
+        </form>
+    </div>
 </body>
 </html>
