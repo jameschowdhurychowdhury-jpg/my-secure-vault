@@ -155,13 +155,13 @@ def download_file(filename):
         flash(f"Could not generate download link: {str(e)}", "danger")
         return redirect(url_for('index'))
 
-# --- SECURE DELETION ROUTE ---
-@app.route('/delete/<path:filename>', methods=['POST'])
+# --- BULLETPROOF DELETION ROUTE (Accepts both GET and POST) ---
+@app.route('/delete/<path:filename>', methods=['GET', 'POST'])
 @login_required
 def delete_file(filename):
     try:
         s3_client.delete_object(Bucket=B2_BUCKET_NAME, Key=filename)
-        flash(f"'{filename}' was permanently deleted from your storage vault.", "success")
+        flash(f"'{filename}' was permanently removed from storage.", "success")
     except Exception as e:
         flash(f"Failed to remove file from cloud storage: {str(e)}", "danger")
     return redirect(url_for('index'))
