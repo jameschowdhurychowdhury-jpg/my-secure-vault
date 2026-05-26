@@ -6,12 +6,11 @@ import boto3
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 
 app = Flask(__name__)
-# Secure key set via environment variables or fallback safely
 app.secret_key = os.environ.get("FLASK_SECRET_KEY", "super-secret-vault-key")
 
 # --- BACKBLAZE B2 CONFIGURATION ---
 B2_BUCKET_NAME = os.environ.get("B2_BUCKET_NAME")
-VAULT_PASSWORD = os.environ.get("VAULT_PASSWORD", "password123")  # Master gateway password
+VAULT_PASSWORD = os.environ.get("VAULT_PASSWORD", "password123")
 
 s3_client = boto3.client(
     's3',
@@ -52,7 +51,6 @@ def logout():
 @app.route('/')
 @login_required
 def index():
-    # Structural buckets for sorting UI data
     categories = {
         'pictures': [],
         'pdfs': [],
@@ -69,7 +67,6 @@ def index():
             filename = f['Key']
             ext = os.path.splitext(filename)[1].lower()
             
-            # Simple extension categorization matching UI segments
             if ext in ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg']:
                 categories['pictures'].append(filename)
             elif ext == '.pdf':
@@ -100,21 +97,16 @@ def upload():
 
     if file:
         filename = file.filename
-        
-        # 1. Automatically detect if it's an MP3, PNG, PDF, etc.
         mime_type, _ = mimetypes.guess_type(filename)
         if not mime_type:
-            mime_type = 'application/octet-stream'  # Fallback asset type
+            mime_type = 'application/octet-stream'
 
         try:
-            # 2. Upload directly to Backblaze with registered ContentType metadata
             s3_client.upload_fileobj(
                 file,
                 B2_BUCKET_NAME,
                 filename,
-                ExtraArgs={
-                    'ContentType': mime_type
-                }
+                ExtraArgs={'ContentType': mime_type}
             )
             flash(f"'{filename}' successfully uploaded directly to vault.", "success")
         except Exception as e:
@@ -126,13 +118,17 @@ def upload():
 @login_required
 def view_file(filename):
     try:
-        # Generates a cloud link that commands the browser to stream/view inline
+        mime_type, _ = mimetypes.guess_type(filename)
+        if not mime_type:
+            mime_type = 'application/octet-stream'
+
         url = s3_client.generate_presigned_url(
             'get_object',
             Params={
                 'Bucket': B2_BUCKET_NAME,
                 'Key': filename,
-                'ResponseContentDisposition': 'inline'
+                'ResponseContentDisposition': 'inline',
+                'ResponseContentType': mime_type
             },
             ExpiresIn=3600
         )
@@ -145,7 +141,6 @@ def view_file(filename):
 @login_required
 def download_file(filename):
     try:
-        # Generates a cloud link that forces the browser to instantly save to disk
         url = s3_client.generate_presigned_url(
             'get_object',
             Params={
@@ -160,9 +155,17 @@ def download_file(filename):
         flash(f"Could not generate download link: {str(e)}", "danger")
         return redirect(url_for('index'))
 
-# --- FIXED DEPLOYMENT BINDING FOR RENDER ---
+# --- NEW: SECURE CLOUD DELETION ROUTE ---
+@app.route('/delete/<path:filename>', methods=['POST'])
+@login_required
+def delete_file(filename):
+    try:
+        s3_client.delete_object(Bucket=B2_BUCKET_NAME, Key=filename)
+        flash(f"'{filename}' was permanently deleted from your storage vault.", "success")
+    except Exception as e:
+        flash(f"Failed to remove file from cloud storage: {str(e)}", "danger")
+    return redirect(url_for('index'))
+
 if __name__ == '__main__':
-    # 1. Dynamically read the environment port allocated by Render
     port = int(os.environ.get("PORT", 5000))
-    # 2. Bind host to 0.0.0.0 so Render's public network router can discover the service
     app.run(host="0.0.0.0", port=port)
