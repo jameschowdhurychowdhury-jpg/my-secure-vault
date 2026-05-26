@@ -155,7 +155,7 @@ def download_file(filename):
         flash(f"Could not generate download link: {str(e)}", "danger")
         return redirect(url_for('index'))
 
-# --- NEW: SECURE CLOUD DELETION ROUTE ---
+# --- SECURE DELETION ROUTE ---
 @app.route('/delete/<path:filename>', methods=['POST'])
 @login_required
 def delete_file(filename):
