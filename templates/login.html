@@ -9,7 +9,7 @@
             --neon: #00f2fe;
             --accent: #7c4dff;
             --bg: #020208;
-            --glass: rgba(10, 15, 30, 0.75);
+            --glass: rgba(10, 15, 30, 0.85);
             --border: rgba(0, 242, 254, 0.25);
             --danger: #ef4444;
         }
@@ -29,11 +29,11 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            perspective: 1000px; /* Strong 3D camera focal point */
+            perspective: 1200px; /* Enhanced depth perception focal spot */
             user-select: none;
         }
 
-        /* Ambient Space Background Grid */
+        /* Grid Map Vector Space */
         .grid-bg {
             position: absolute;
             width: 200%;
@@ -48,7 +48,6 @@
             z-index: 1;
         }
 
-        /* Instructions HUD Overlay */
         .hud-overlay {
             position: absolute;
             top: 2rem;
@@ -59,7 +58,6 @@
         .hud-overlay h2 { font-size: 1.2rem; color: var(--neon); letter-spacing: 2px; margin-bottom: 0.5rem; }
         .hud-overlay p { font-size: 0.8rem; color: #64748b; }
 
-        /* The Core 3D Physics Viewport Stage */
         .viewport-3d {
             width: 400px;
             height: 400px;
@@ -70,7 +68,6 @@
         }
         .viewport-3d:active { cursor: grabbing; }
 
-        /* True 3D Volumetric Cylinder Geometric Structure */
         .cylinder-pod {
             width: 100%;
             height: 100%;
@@ -79,30 +76,47 @@
             will-change: transform;
         }
 
-        /* Individual Dimensional Structural Panels with Transparent Image Integration */
+        /* Overhauled Volumetric Panel Structuring */
         .panel {
             position: absolute;
             width: 260px;
             height: 380px;
-            left: 70px; /* Center within parent container */
-            
-            /* TRANSPARENT MOD IMAGE: Combines a translucent dark layer with your static profile image */
-            background: linear-gradient(rgba(10, 15, 30, 0.85), rgba(10, 15, 30, 0.85)), 
-                        url("{{ url_for('static', filename='bg-profile.jpg') }}") no-repeat center center;
-            background-size: cover;
-            
+            left: 70px;
+            background: var(--glass);
             border: 2px solid var(--border);
             border-radius: 16px;
             padding: 2rem 1.5rem;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            backface-visibility: visible; /* Allows you to view the geometry inside/out */
+            
+            /* CRITICAL FIX: Hide panel internals completely when looking from behind */
+            backface-visibility: hidden; 
+            
             box-shadow: 0 0 30px rgba(0, 242, 254, 0.05), inset 0 0 20px rgba(0, 242, 254, 0.1);
-            transition: border-color 0.3s;
+            transition: border-color 0.3s, background 0.4s;
+            overflow: hidden;
         }
 
-        /* Spatial Trigonometric Matrix Transform Mapping */
+        /* Secondary Backing Panels - Acting as the reloading/processing node architecture */
+        .panel-back-hologram {
+            position: absolute;
+            width: 260px;
+            height: 380px;
+            left: 70px;
+            background: rgba(124, 77, 255, 0.04);
+            border: 1px dashed rgba(124, 77, 255, 0.3);
+            border-radius: 16px;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 1.5rem;
+            box-shadow: inset 0 0 15px rgba(124, 77, 255, 0.1);
+        }
+
+        /* Geometric Trigonometric Offset Rules (Front Panels facing outward) */
         .face-1 { transform: rotateY(0deg) translateZ(225px); }
         .face-2 { transform: rotateY(60deg) translateZ(225px); }
         .face-3 { transform: rotateY(120deg) translateZ(225px); }
@@ -110,21 +124,36 @@
         .face-5 { transform: rotateY(240deg) translateZ(225px); }
         .face-6 { transform: rotateY(300deg) translateZ(225px); }
 
-        /* Interface Formatting Inside the 3D Panels */
+        /* Counter-rotated Backing Panels to display mechanisms correctly when looking from the reverse side */
+        .back-face-1 { transform: rotateY(180deg) translateZ(-224px); }
+        .back-face-2 { transform: rotateY(240deg) translateZ(-224px); }
+        .back-face-3 { transform: rotateY(300deg) translateZ(-224px); }
+        .back-face-4 { transform: rotateY(0deg) translateZ(-224px); }
+        .back-face-5 { transform: rotateY(60deg) translateZ(-224px); }
+        .back-face-6 { transform: rotateY(120deg) translateZ(-224px); }
+
+        /* Specific Picture Insertion Target Point */
+        .user-avatar-bg {
+            background: linear-gradient(rgba(10, 15, 30, 0.85), rgba(10, 15, 30, 0.85)), 
+                        url("{{ url_for('static', filename='bg-profile.jpg') }}") no-repeat center center;
+            background-size: cover;
+        }
+
         .panel-header {
             text-align: center;
             border-bottom: 1px dashed var(--border);
             padding-bottom: 0.75rem;
+            width: 100%;
         }
         .panel-header h3 { font-size: 1rem; color: var(--neon); letter-spacing: 1px; }
         .panel-header span { font-size: 0.65rem; color: #475569; }
 
-        /* Form Structure Integration layout wrapper */
         .login-form-container {
             height: 100%;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            width: 100%;
         }
 
         .input-block {
@@ -169,7 +198,6 @@
             box-shadow: 0 0 20px var(--neon);
         }
 
-        /* Flask Flash Notification Error Blocks */
         .error-stream {
             font-size: 0.7rem;
             color: var(--danger);
@@ -187,7 +215,45 @@
             line-height: 1.4;
         }
 
-        /* Telemetry HUD display */
+        /* Matrix Processing & Reload Animation Components */
+        .reloader-matrix {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            width: 100%;
+        }
+        .reload-bar {
+            height: 3px;
+            background: rgba(0, 242, 254, 0.1);
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+        }
+        .reload-bar::after {
+            content: '';
+            position: absolute;
+            left: -50%;
+            height: 100%;
+            width: 30%;
+            background: var(--accent);
+            animation: streamingData 2s infinite linear;
+        }
+        .reload-bar:nth-child(2n)::after {
+            animation-delay: 0.7s;
+            background: var(--neon);
+        }
+
+        .matrix-spinner {
+            width: 45px;
+            height: 45px;
+            border: 2px solid transparent;
+            border-top-color: var(--accent);
+            border-bottom-color: var(--neon);
+            border-radius: 50%;
+            animation: spinClockwise 1.5s infinite linear;
+            margin-bottom: 15px;
+        }
+
         .telemetry-deck {
             position: absolute;
             bottom: 2rem;
@@ -198,6 +264,9 @@
             text-align: right;
             line-height: 1.6;
         }
+
+        @keyframes spinClockwise { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        @keyframes streamingData { from { left: -30%; } to { left: 130%; } }
     </style>
 </head>
 <body>
@@ -212,7 +281,7 @@
     <div class="viewport-3d" id="stage">
         <div class="cylinder-pod" id="pod">
             
-            <div class="panel face-1">
+            <div class="panel face-1 user-avatar-bg">
                 <div class="panel-header">
                     <h3>SECURE_GATE_01</h3>
                     <span>PRIMARY AUTH TERMINAL</span>
@@ -220,7 +289,6 @@
                 
                 <form class="login-form-container" method="POST" action="{{ url_for('login') }}">
                     <div style="flex-grow: 1; display: flex; flex-direction: column; justify-content: center;">
-                        
                         {% with messages = get_flashed_messages(with_categories=true) %}
                           {% if messages %}
                             {% for category, message in messages %}
@@ -234,12 +302,11 @@
                             <input type="password" name="password" placeholder="••••••••" required autocomplete="current-password">
                         </div>
                     </div>
-                    
                     <button type="submit" class="action-trigger">Initialize Node</button>
                 </form>
             </div>
 
-            <div class="panel face-2">
+            <div class="panel face-2 user-avatar-bg">
                 <div class="panel-header">
                     <h3>DATA_LOG_02</h3>
                     <span>LIVE SYSTEM INTEGRITY</span>
@@ -255,7 +322,7 @@
                 <div style="font-size:0.65rem; color:var(--neon); text-align:center;">NODE STATUS: STANDBY</div>
             </div>
 
-            <div class="panel face-3">
+            <div class="panel face-3 user-avatar-bg">
                 <div class="panel-header">
                     <h3>SYS_DIAG_03</h3>
                     <span>HARDWARE COMPLIANCE</span>
@@ -266,7 +333,7 @@
                 </div>
             </div>
 
-            <div class="panel face-4">
+            <div class="panel face-4 user-avatar-bg">
                 <div class="panel-header">
                     <h3>OVERRIDE_04</h3>
                     <span>REAR BACKUP ACCESS</span>
@@ -278,7 +345,7 @@
                 <button type="button" class="action-trigger" style="background:transparent; border:1px solid #ef4444; color:#ef4444; cursor: not-allowed;">Force Flush</button>
             </div>
 
-            <div class="panel face-5">
+            <div class="panel face-5 user-avatar-bg">
                 <div class="panel-header">
                     <h3>NET_PROTOCOL_05</h3>
                     <span>BANDWIDTH ROUTING MAP</span>
@@ -294,7 +361,7 @@
                 </div>
             </div>
 
-            <div class="panel face-6">
+            <div class="panel face-6 user-avatar-bg">
                 <div class="panel-header">
                     <h3>DB_CLUSTER_06</h3>
                     <span>MEMPOOL REPLICATION</span>
@@ -303,18 +370,63 @@
                 <div style="font-size:0.65rem; color:#64748b; text-align:center;">REDUNDANCY INTEGRATION COMPLETENESS</div>
             </div>
 
+
+            <div class="panel-back-hologram back-face-1">
+                <div class="matrix-spinner"></div>
+                <div class="reloader-matrix">
+                    <div class="reload-bar"></div><div class="reload-bar"></div><div class="reload-bar"></div>
+                </div>
+                <span style="font-size: 0.55rem; color: var(--accent); margin-top: 10px; tracking: 2px;">RELOADING NODE_01</span>
+            </div>
+
+            <div class="panel-back-hologram back-face-2">
+                <div class="matrix-spinner" style="animation-direction: reverse; border-top-color: var(--neon);"></div>
+                <div class="reloader-matrix">
+                    <div class="reload-bar"></div><div class="reload-bar"></div>
+                </div>
+                <span style="font-size: 0.55rem; color: var(--neon); margin-top: 10px; tracking: 2px;">SYNCING MATRIX_02</span>
+            </div>
+
+            <div class="panel-back-hologram back-face-3">
+                <div class="matrix-spinner"></div>
+                <div class="reloader-matrix">
+                    <div class="reload-bar"></div><div class="reload-bar"></div><div class="reload-bar"></div>
+                </div>
+                <span style="font-size: 0.55rem; color: var(--accent); margin-top: 10px; tracking: 2px;">PROCESSING DIAG_03</span>
+            </div>
+
+            <div class="panel-back-hologram back-face-4">
+                <div class="matrix-spinner" style="animation-direction: reverse;"></div>
+                <div class="reloader-matrix">
+                    <div class="reload-bar"></div><div class="reload-bar"></div>
+                </div>
+                <span style="font-size: 0.55rem; color: var(--neon); margin-top: 10px; tracking: 2px;">BUFFERING CORES_04</span>
+            </div>
+
+            <div class="panel-back-hologram back-face-5">
+                <div class="matrix-spinner"></div>
+                <div class="reloader-matrix">
+                    <div class="reload-bar"></div><div class="reload-bar"></div><div class="reload-bar"></div>
+                </div>
+                <span style="font-size: 0.55rem; color: var(--accent); margin-top: 10px; tracking: 2px;">ROUTING NET_05</span>
+            </div>
+
+            <div class="panel-back-hologram back-face-6">
+                <div class="matrix-spinner" style="animation-direction: reverse; border-top-color: var(--neon);"></div>
+                <div class="reloader-matrix">
+                    <div class="reload-bar"></div><div class="reload-bar"></div>
+                </div>
+                <span style="font-size: 0.55rem; color: var(--neon); margin-top: 10px; tracking: 2px;">REPLICATING CLUSTER_06</span>
+            </div>
+
         </div>
     </div>
 
     <div class="telemetry-deck">
         ROTATION_VECTOR_X: <span id="tele-x">0.0°</span><br>
         ROTATION_VECTOR_Y: <span id="tele-y">0.0°</span><br>
-        POLYGON_COUNT: 6 FACES (CLOSED CYLINDER)
+        POLYGON_COUNT: 12 FACES (VOLUMETRIC BACKUP CORE)
     </div>
-
-    <style>
-        @keyframes spinClockwise { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-    </style>
 
     <script>
         const stage = document.getElementById('stage');
