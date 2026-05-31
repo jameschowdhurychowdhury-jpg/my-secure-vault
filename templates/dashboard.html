@@ -52,25 +52,11 @@
         /* Modernized Interactive Table Overhaul */
         .table {
             color: #e2e8f0 !important;
-            border-color: #2d3748;
-        }
-
-        /* Forces table body rows to remain dark to preserve layout contrast */
-        .table tbody tr {
-            background-color: #161b26 !important;
+            border-color: #2d3748 !important;
         }
 
         .table-hover tbody tr:hover {
             background-color: #1e2533 !important;
-        }
-
-        .table-light th {
-            background-color: #111622 !important;
-            color: #718096 !important;
-            text-transform: uppercase;
-            font-size: 0.75rem;
-            letter-spacing: 0.05em;
-            border-bottom: 2px solid #2d3748;
         }
 
         .tab-content-wrapper {
@@ -165,17 +151,17 @@
                         
                         {% if files %}
                             <div class="table-responsive">
-                                <table class="table align-middle m-0">
-                                    <thead class="table-light">
-                                        <tr>
-                                            <th>File Name</th>
-                                            <th class="text-end">Actions</th>
+                                <table class="table table-dark table-hover align-middle m-0">
+                                    <thead>
+                                        <tr style="border-bottom: 2px solid #2d3748;">
+                                            <th style="background-color: #111622; color: #718096; font-size: 0.75rem; uppercase; tracking: 0.05em;">File Name</th>
+                                            <th style="background-color: #111622; color: #718096; font-size: 0.75rem; uppercase; tracking: 0.05em;" class="text-end">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {% for file in files %}
-                                        <tr>
-                                            <td class="text-break text-white fw-medium">
+                                        <tr style="background-color: #161b26 !important; border-bottom: 1px solid #2d3748;">
+                                            <td class="text-break text-white fw-medium py-3">
                                                 {% if category == 'pictures' %}🖼️ 
                                                 {% elif category == 'pdfs' %}📄 
                                                 {% elif category == 'videos' %}🎬 
@@ -183,15 +169,15 @@
                                                 {% else %}📦 {% endif %}
                                                 {{ file }}
                                             </td>
-                                            <td class="text-end">
+                                            <td class="text-end py-3">
                                                 <div class="d-inline-flex gap-2">
                                                     <a href="{{ url_for('download_file', category=category, filename=file) }}" 
-                                                       target="_blank" class="btn btn-sm btn-outline-info px-3">View</a>
+                                                       target="_blank" class="btn btn-sm btn-outline-info px-3 fw-medium">View</a>
                                                     
                                                     <form action="{{ url_for('delete_file', category=category, filename=file) }}" 
                                                           method="POST" 
                                                           onsubmit="return confirm('Are you sure you want to permanently delete this file?');">
-                                                        <button type="submit" class="btn btn-sm btn-outline-danger">Remove</button>
+                                                        <button type="submit" class="btn btn-sm btn-outline-danger fw-medium">Remove</button>
                                                     </form>
                                                 </div>
                                             </td>
