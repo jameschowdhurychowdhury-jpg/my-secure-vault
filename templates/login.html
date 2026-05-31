@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>True 360° Volumetric Login Node</title>
+    <title>360° Volumetric Login Node - Deep Space Core</title>
     <style>
         :root {
             --neon: #00f2fe;
             --accent: #7c4dff;
-            --bg: #020208;
-            --glass: rgba(10, 15, 30, 0.85);
+            --bg: #02020a;
+            --glass: rgba(10, 15, 30, 0.82);
             --border: rgba(0, 242, 254, 0.25);
             --danger: #ef4444;
         }
@@ -33,19 +33,15 @@
             user-select: none;
         }
 
-        /* Grid Map Vector Space */
-        .grid-bg {
+        /* Deep Space Cosmos Canvas Layer */
+        #space-bg {
             position: absolute;
-            width: 200%;
-            height: 200%;
-            background-image: 
-                linear-gradient(rgba(0, 242, 254, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 242, 254, 0.03) 1px, transparent 1px);
-            background-size: 50px 50px;
-            background-position: center;
-            transform: rotateX(60deg) translateZ(-400px);
-            opacity: 0.5;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             z-index: 1;
+            pointer-events: none;
         }
 
         .hud-overlay {
@@ -55,7 +51,7 @@
             z-index: 10;
             pointer-events: none;
         }
-        .hud-overlay h2 { font-size: 1.2rem; color: var(--neon); letter-spacing: 2px; margin-bottom: 0.5rem; }
+        .hud-overlay h2 { font-size: 1.2rem; color: var(--neon); letter-spacing: 2px; margin-bottom: 0.5rem; text-shadow: 0 0 10px rgba(0, 242, 254, 0.5); }
         .hud-overlay p { font-size: 0.8rem; color: #64748b; }
 
         .viewport-3d {
@@ -93,15 +89,16 @@
             box-shadow: 0 0 30px rgba(0, 242, 254, 0.05), inset 0 0 20px rgba(0, 242, 254, 0.1);
             transition: border-color 0.3s, background 0.4s;
             overflow: hidden;
+            backdrop-filter: blur(4px);
         }
 
-        /* Cleaned Mechanical Back Faces */
+        /* Mechanical Back Faces */
         .panel-back-hologram {
             position: absolute;
             width: 260px;
             height: 380px;
             left: 70px;
-            background: rgba(10, 15, 35, 0.9);
+            background: rgba(8, 10, 25, 0.92);
             border: 1px solid rgba(0, 242, 254, 0.2);
             border-radius: 16px;
             backface-visibility: hidden;
@@ -114,7 +111,7 @@
             overflow: hidden;
         }
 
-        /* 3D Spacing Positions */
+        /* 3D Spacing Coordinates */
         .face-1 { transform: rotateY(0deg) translateZ(225px); }
         .face-2 { transform: rotateY(60deg) translateZ(225px); }
         .face-3 { transform: rotateY(120deg) translateZ(225px); }
@@ -315,11 +312,11 @@
 </head>
 <body>
 
-    <div class="grid-bg"></div>
+    <canvas id="space-bg"></canvas>
 
     <div class="hud-overlay">
-        <h2>CORE_MATRIX_v6.00</h2>
-        <p>LEFT CLICK + DRAG ANYWHERE TO SPIN OBJECT 360°</p>
+        <h2>ORBITAL_MATRIX_v7.00</h2>
+        <p>LEFT CLICK + DRAG ANYWHERE TO ROTATE SYSTEM Node</p>
     </div>
 
     <div class="viewport-3d" id="stage">
@@ -452,20 +449,144 @@
     </div>
 
     <div class="telemetry-deck">
-        ROTATION_VECTOR_X: <span id="tele-x">0.0°</span><br>
+        COSMOS_ENTROPY: <span id="tele-space">ACTIVE</span><br>
         ROTATION_VECTOR_Y: <span id="tele-y">0.0°</span><br>
-        POLYGON_COUNT: 12 FACES (ENGINE KINETICS ACTIVE)
+        POLYGON_COUNT: SOLAR NODE CORE
     </div>
+
+    <script>
+        const canvas = document.getElementById('space-bg');
+        const ctx = canvas.getContext('2d');
+
+        let stars = [];
+        let asteroids = [];
+        let planets = [];
+        const sun = { x: 0, y: 0, radius: 35 };
+
+        function initializeSpace() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            
+            // Generate Stars
+            stars = [];
+            for(let i=0; i<150; i++) {
+                stars.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    size: Math.random() * 1.8,
+                    opacity: Math.random(),
+                    speed: 0.005 + Math.random() * 0.01
+                });
+            }
+
+            // Generate Asteroids
+            asteroids = [];
+            for(let i=0; i<12; i++) {
+                asteroids.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    radius: 2 + Math.random() * 4,
+                    dx: (Math.random() - 0.5) * 0.4,
+                    dy: (Math.random() - 0.5) * 0.4
+                });
+            }
+
+            // Define Solar System Planets (Relative offsets from center)
+            planets = [
+                { distance: 80, radius: 4, speed: 0.03, color: '#94a3b8', angle: Math.random() * Math.PI * 2 },  // Mercury
+                { distance: 120, radius: 7, speed: 0.02, color: '#e2e8f0', angle: Math.random() * Math.PI * 2 }, // Venus
+                { distance: 170, radius: 8, speed: 0.015, color: '#00f2fe', angle: Math.random() * Math.PI * 2 },// Earth
+                { distance: 220, radius: 6, speed: 0.01, color: '#f87171', angle: Math.random() * Math.PI * 2 }, // Mars
+                { distance: 290, radius: 14, speed: 0.007, color: '#fb923c', angle: Math.random() * Math.PI * 2 } // Jupiter
+            ];
+        }
+
+        function drawSpaceEngine() {
+            ctx.fillStyle = '#010105';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+
+            // 1. Draw Twinkling Stars
+            for(let star of stars) {
+                star.opacity += star.speed;
+                if(star.opacity > 1 || star.opacity < 0) star.speed = -star.speed;
+                ctx.fillStyle = `rgba(255, 255, 255, ${Math.abs(star.opacity)})`;
+                ctx.beginPath();
+                ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // 2. Draw Wandering Asteroids
+            for(let ast of asteroids) {
+                ast.x += ast.dx;
+                ast.y += ast.dy;
+                if(ast.x < 0 || ast.x > canvas.width) ast.dx = -ast.dx;
+                if(ast.y < 0 || ast.y > canvas.height) ast.dy = -ast.dy;
+                
+                ctx.fillStyle = '#475569';
+                ctx.beginPath();
+                ctx.arc(ast.x, ast.y, ast.radius, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // 3. Draw The Glow Sun
+            let sunGlow = ctx.createRadialGradient(centerX, centerY, 5, centerX, centerY, sun.radius * 2);
+            sunGlow.addColorStop(0, '#fffbeb');
+            sunGlow.addColorStop(0.2, '#fef08a');
+            sunGlow.addColorStop(0.5, 'rgba(245, 158, 11, 0.3)');
+            sunGlow.addColorStop(1, 'rgba(245, 158, 11, 0)');
+            ctx.fillStyle = sunGlow;
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, sun.radius * 2, 0, Math.PI * 2);
+            ctx.fill();
+
+            // 4. Draw Solar System Planets & Orbit Rings
+            for(let planet of planets) {
+                planet.angle += planet.speed;
+
+                // Orbit Ring Line
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.03)';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, planet.distance, 0, Math.PI * 2);
+                ctx.stroke();
+
+                // Planet Node Position Calculation
+                const pX = centerX + Math.cos(planet.angle) * planet.distance;
+                const pY = centerY + Math.sin(planet.angle) * planet.distance;
+
+                ctx.fillStyle = planet.color;
+                ctx.beginPath();
+                ctx.arc(pX, pY, planet.radius, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Optional tiny highlight bloom on planets
+                if (planet.color === '#00f2fe') {
+                    ctx.fillStyle = 'rgba(0, 242, 254, 0.4)';
+                    ctx.beginPath();
+                    ctx.arc(pX, pY, planet.radius + 3, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+
+            requestAnimationFrame(drawSpaceEngine);
+        }
+
+        window.addEventListener('resize', initializeSpace);
+        initializeSpace();
+        drawSpaceEngine();
+    </script>
 
     <script>
         const stage = document.getElementById('stage');
         const pod = document.getElementById('pod');
-        const teleX = document.getElementById('tele-x');
         const teleY = document.getElementById('tele-y');
 
         let isInteracting = false;
-        let currentX = -15; 
-        let currentY = -25; 
+        let currentX = -12; 
+        let currentY = -20; 
         let previousMouseX = 0;
         let previousMouseY = 0;
 
@@ -484,10 +605,10 @@
             const deltaMouseX = clientX - previousMouseX;
             const deltaMouseY = clientY - previousMouseY;
 
-            targetY += deltaMouseX * 0.5; 
-            targetX -= deltaMouseY * 0.5; 
+            targetY += deltaMouseX * 0.4; 
+            targetX -= deltaMouseY * 0.4; 
 
-            targetX = Math.max(-45, Math.min(45, targetX));
+            targetX = Math.max(-40, Math.min(40, targetX));
 
             previousMouseX = clientX;
             previousMouseY = clientY;
@@ -506,8 +627,6 @@
             currentY += (targetY - currentY) * 0.1;
 
             pod.style.transform = `rotateX(${currentX}deg) rotateY(${currentY}deg)`;
-
-            teleX.innerText = `${((currentX % 360 + 360) % 360).toFixed(1)}°`;
             teleY.innerText = `${((currentY % 360 + 360) % 360).toFixed(1)}°`;
 
             requestAnimationFrame(execute3DTransformationTick);
