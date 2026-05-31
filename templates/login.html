@@ -29,7 +29,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            perspective: 1200px; /* Enhanced depth perception focal spot */
+            perspective: 1200px;
             user-select: none;
         }
 
@@ -76,7 +76,7 @@
             will-change: transform;
         }
 
-        /* Overhauled Volumetric Panel Structuring */
+        /* Front-Facing Volumetric Panels */
         .panel {
             position: absolute;
             width: 260px;
@@ -89,34 +89,32 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            
-            /* CRITICAL FIX: Hide panel internals completely when looking from behind */
             backface-visibility: hidden; 
-            
             box-shadow: 0 0 30px rgba(0, 242, 254, 0.05), inset 0 0 20px rgba(0, 242, 254, 0.1);
             transition: border-color 0.3s, background 0.4s;
             overflow: hidden;
         }
 
-        /* Secondary Backing Panels - Acting as the reloading/processing node architecture */
+        /* OVERHAULED BACKING PANELS: Pure Robotic Engine Core Layout (No Text Headers) */
         .panel-back-hologram {
             position: absolute;
             width: 260px;
             height: 380px;
             left: 70px;
-            background: rgba(124, 77, 255, 0.04);
-            border: 1px dashed rgba(124, 77, 255, 0.3);
+            background: rgba(10, 15, 35, 0.9);
+            border: 1px solid rgba(0, 242, 254, 0.2);
             border-radius: 16px;
             backface-visibility: hidden;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: space-around;
             align-items: center;
-            padding: 1.5rem;
-            box-shadow: inset 0 0 15px rgba(124, 77, 255, 0.1);
+            padding: 2rem 1.5rem;
+            box-shadow: inset 0 0 25px rgba(0, 242, 254, 0.15);
+            overflow: hidden;
         }
 
-        /* Geometric Trigonometric Offset Rules (Front Panels facing outward) */
+        /* Geometric Trigonometric Offset Rules (Front) */
         .face-1 { transform: rotateY(0deg) translateZ(225px); }
         .face-2 { transform: rotateY(60deg) translateZ(225px); }
         .face-3 { transform: rotateY(120deg) translateZ(225px); }
@@ -124,7 +122,7 @@
         .face-5 { transform: rotateY(240deg) translateZ(225px); }
         .face-6 { transform: rotateY(300deg) translateZ(225px); }
 
-        /* Counter-rotated Backing Panels to display mechanisms correctly when looking from the reverse side */
+        /* Counter-rotated Backing Panels */
         .back-face-1 { transform: rotateY(180deg) translateZ(-224px); }
         .back-face-2 { transform: rotateY(240deg) translateZ(-224px); }
         .back-face-3 { transform: rotateY(300deg) translateZ(-224px); }
@@ -132,7 +130,7 @@
         .back-face-5 { transform: rotateY(60deg) translateZ(-224px); }
         .back-face-6 { transform: rotateY(120deg) translateZ(-224px); }
 
-        /* Specific Picture Insertion Target Point */
+        /* User Picture Background Placement Selector */
         .user-avatar-bg {
             background: linear-gradient(rgba(10, 15, 30, 0.85), rgba(10, 15, 30, 0.85)), 
                         url("{{ url_for('static', filename='bg-profile.jpg') }}") no-repeat center center;
@@ -215,43 +213,93 @@
             line-height: 1.4;
         }
 
-        /* Matrix Processing & Reload Animation Components */
-        .reloader-matrix {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            width: 100%;
-        }
-        .reload-bar {
-            height: 3px;
-            background: rgba(0, 242, 254, 0.1);
-            position: relative;
-            overflow: hidden;
-            width: 100%;
-        }
-        .reload-bar::after {
-            content: '';
+        /* ==================== RUNNING ROBOTIC MECHANICS (ANIMATIONS) ==================== */
+        
+        /* 1. Robotic Scanline Wave */
+        .robot-laser-scanner {
             position: absolute;
-            left: -50%;
-            height: 100%;
-            width: 30%;
-            background: var(--accent);
-            animation: streamingData 2s infinite linear;
-        }
-        .reload-bar:nth-child(2n)::after {
-            animation-delay: 0.7s;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
             background: var(--neon);
+            box-shadow: 0 0 15px var(--neon);
+            animation: laserScan 3s infinite ease-in-out;
         }
 
-        .matrix-spinner {
-            width: 45px;
-            height: 45px;
-            border: 2px solid transparent;
-            border-top-color: var(--accent);
-            border-bottom-color: var(--neon);
+        /* 2. Concentric Mechanical Rings */
+        .servo-ring-assembly {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .outer-gear {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 2px dashed var(--neon);
             border-radius: 50%;
-            animation: spinClockwise 1.5s infinite linear;
-            margin-bottom: 15px;
+            animation: spinClockwise 8s infinite linear;
+        }
+        .inner-gear {
+            position: absolute;
+            width: 70%;
+            height: 70%;
+            border: 2px dotted var(--accent);
+            border-radius: 50%;
+            animation: spinCounterClockwise 4s infinite linear;
+        }
+        .core-node {
+            width: 20%;
+            height: 20%;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 20px var(--neon);
+            animation: corePulse 1.5s infinite ease-in-out;
+        }
+
+        /* 3. Equalizer / Mechanical Load Bars */
+        .robotic-matrix-grid {
+            display: flex;
+            gap: 6px;
+            align-items: flex-end;
+            height: 60px;
+            width: 100%;
+            justify-content: center;
+        }
+        .matrix-column {
+            width: 8px;
+            background: linear-gradient(to top, var(--accent), var(--neon));
+            border-radius: 2px;
+            animation: computationalWave 1.2s infinite ease-in-out;
+        }
+        .matrix-column:nth-child(2) { animation-delay: 0.2s; height: 40%; }
+        .matrix-column:nth-child(3) { animation-delay: 0.4s; height: 75%; }
+        .matrix-column:nth-child(4) { animation-delay: 0.1s; height: 50%; }
+        .matrix-column:nth-child(5) { animation-delay: 0.6s; height: 90%; }
+        .matrix-column:nth-child(6) { animation-delay: 0.3s; height: 30%; }
+
+        /* 4. Binary/Hex Stream blocks */
+        .data-chassis-loader {
+            width: 100%;
+            height: 40px;
+            border: 1px solid rgba(0, 242, 254, 0.15);
+            background: rgba(0,0,0,0.4);
+            position: relative;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .chassis-fill {
+            height: 100%;
+            width: 40%;
+            background: rgba(0, 242, 254, 0.15);
+            border-right: 2px solid var(--neon);
+            position: absolute;
+            left: -40%;
+            animation: loopChassis 2.5s infinite linear;
         }
 
         .telemetry-deck {
@@ -265,8 +313,13 @@
             line-height: 1.6;
         }
 
+        /* Animation Matrices */
         @keyframes spinClockwise { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        @keyframes streamingData { from { left: -30%; } to { left: 130%; } }
+        @keyframes spinCounterClockwise { from { transform: rotate(360deg); } to { transform: rotate(0deg); } }
+        @keyframes laserScan { 0%, 100% { top: 0%; opacity: 0.3; } 50% { top: 100%; opacity: 1; } }
+        @keyframes corePulse { 0%, 100% { transform: scale(0.8); opacity: 0.5; } 50% { transform: scale(1.2); opacity: 1; } }
+        @keyframes computationalWave { 0%, 100% { height: 20%; } 50% { height: 95%; } }
+        @keyframes loopChassis { from { left: -40%; } to { left: 100%; } }
     </style>
 </head>
 <body>
@@ -372,51 +425,57 @@
 
 
             <div class="panel-back-hologram back-face-1">
-                <div class="matrix-spinner"></div>
-                <div class="reloader-matrix">
-                    <div class="reload-bar"></div><div class="reload-bar"></div><div class="reload-bar"></div>
+                <div class="robot-laser-scanner"></div>
+                <div class="servo-ring-assembly">
+                    <div class="outer-gear"></div><div class="inner-gear"></div><div class="core-node"></div>
                 </div>
-                <span style="font-size: 0.55rem; color: var(--accent); margin-top: 10px; tracking: 2px;">RELOADING NODE_01</span>
+                <div class="robotic-matrix-grid">
+                    <div class="matrix-column" style="height: 40%"></div><div class="matrix-column" style="height: 80%"></div>
+                    <div class="matrix-column" style="height: 25%"></div><div class="matrix-column" style="height: 60%"></div>
+                </div>
             </div>
 
             <div class="panel-back-hologram back-face-2">
-                <div class="matrix-spinner" style="animation-direction: reverse; border-top-color: var(--neon);"></div>
-                <div class="reloader-matrix">
-                    <div class="reload-bar"></div><div class="reload-bar"></div>
+                <div class="robot-laser-scanner" style="animation-delay: 0.5s; background: var(--accent); box-shadow: 0 0 15px var(--accent);"></div>
+                <div class="robotic-matrix-grid">
+                    <div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div>
+                    <div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div>
                 </div>
-                <span style="font-size: 0.55rem; color: var(--neon); margin-top: 10px; tracking: 2px;">SYNCING MATRIX_02</span>
+                <div class="data-chassis-loader"><div class="chassis-fill"></div></div>
             </div>
 
             <div class="panel-back-hologram back-face-3">
-                <div class="matrix-spinner"></div>
-                <div class="reloader-matrix">
-                    <div class="reload-bar"></div><div class="reload-bar"></div><div class="reload-bar"></div>
+                <div class="robot-laser-scanner" style="animation-delay: 1s;"></div>
+                <div class="servo-ring-assembly" style="transform: scale(0.8);">
+                    <div class="outer-gear" style="animation-direction: reverse;"></div><div class="inner-gear"></div><div class="core-node" style="background: var(--accent);"></div>
                 </div>
-                <span style="font-size: 0.55rem; color: var(--accent); margin-top: 10px; tracking: 2px;">PROCESSING DIAG_03</span>
+                <div class="data-chassis-loader"><div class="chassis-fill" style="animation-delay: 1.2s; background: rgba(124, 77, 255, 0.2); border-color: var(--accent);"></div></div>
             </div>
 
             <div class="panel-back-hologram back-face-4">
-                <div class="matrix-spinner" style="animation-direction: reverse;"></div>
-                <div class="reloader-matrix">
-                    <div class="reload-bar"></div><div class="reload-bar"></div>
+                <div class="robot-laser-scanner" style="animation-delay: 1.5s;"></div>
+                <div class="robotic-matrix-grid">
+                    <div class="matrix-column" style="animation-duration: 0.8s;"></div><div class="matrix-column" style="animation-duration: 1.5s;"></div>
+                    <div class="matrix-column" style="animation-duration: 1.1s;"></div><div class="matrix-column" style="animation-duration: 0.7s;"></div>
                 </div>
-                <span style="font-size: 0.55rem; color: var(--neon); margin-top: 10px; tracking: 2px;">BUFFERING CORES_04</span>
+                <div class="servo-ring-assembly" style="width: 50px; height: 50px;"><div class="outer-gear"></div><div class="core-node"></div></div>
             </div>
 
             <div class="panel-back-hologram back-face-5">
-                <div class="matrix-spinner"></div>
-                <div class="reloader-matrix">
-                    <div class="reload-bar"></div><div class="reload-bar"></div><div class="reload-bar"></div>
+                <div class="robot-laser-scanner" style="animation-delay: 2s; background: var(--accent);"></div>
+                <div class="servo-ring-assembly">
+                    <div class="outer-gear"></div><div class="inner-gear" style="animation-direction: reverse;"></div><div class="core-node"></div>
                 </div>
-                <span style="font-size: 0.55rem; color: var(--accent); margin-top: 10px; tracking: 2px;">ROUTING NET_05</span>
+                <div class="data-chassis-loader"><div class="chassis-fill"></div></div>
             </div>
 
             <div class="panel-back-hologram back-face-6">
-                <div class="matrix-spinner" style="animation-direction: reverse; border-top-color: var(--neon);"></div>
-                <div class="reloader-matrix">
-                    <div class="reload-bar"></div><div class="reload-bar"></div>
+                <div class="robot-laser-scanner" style="animation-delay: 2.5s;"></div>
+                <div class="data-chassis-loader"><div class="chassis-fill" style="animation-duration: 1s;"></div></div>
+                <div class="robotic-matrix-grid">
+                    <div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div>
+                    <div class="matrix-column"></div>
                 </div>
-                <span style="font-size: 0.55rem; color: var(--neon); margin-top: 10px; tracking: 2px;">REPLICATING CLUSTER_06</span>
             </div>
 
         </div>
@@ -425,7 +484,7 @@
     <div class="telemetry-deck">
         ROTATION_VECTOR_X: <span id="tele-x">0.0°</span><br>
         ROTATION_VECTOR_Y: <span id="tele-y">0.0°</span><br>
-        POLYGON_COUNT: 12 FACES (VOLUMETRIC BACKUP CORE)
+        POLYGON_COUNT: 12 FACES (ENGINE KINETICS ACTIVE)
     </div>
 
     <script>
