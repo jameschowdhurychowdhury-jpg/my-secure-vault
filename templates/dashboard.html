@@ -55,6 +55,11 @@
             border-color: #2d3748;
         }
 
+        /* Forces table body rows to remain dark to preserve layout contrast */
+        .table tbody tr {
+            background-color: #161b26 !important;
+        }
+
         .table-hover tbody tr:hover {
             background-color: #1e2533 !important;
         }
@@ -170,7 +175,7 @@
                                     <tbody>
                                         {% for file in files %}
                                         <tr>
-                                            <td class="text-break text-white-50">
+                                            <td class="text-break text-white fw-medium">
                                                 {% if category == 'pictures' %}🖼️ 
                                                 {% elif category == 'pdfs' %}📄 
                                                 {% elif category == 'videos' %}🎬 
@@ -181,7 +186,7 @@
                                             <td class="text-end">
                                                 <div class="d-inline-flex gap-2">
                                                     <a href="{{ url_for('download_file', category=category, filename=file) }}" 
-                                                       target="_blank" class="btn btn-sm btn-outline-info">View</a>
+                                                       target="_blank" class="btn btn-sm btn-outline-info px-3">View</a>
                                                     
                                                     <form action="{{ url_for('delete_file', category=category, filename=file) }}" 
                                                           method="POST" 

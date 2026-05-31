@@ -51,7 +51,7 @@ def logout():
 @app.route('/', methods=['GET', 'POST'])
 @login_required
 def index():
-    # Dynamic Upload Form Handler (Dashboard left panel)
+    # Dynamic Upload Form Handler (Dashboard left panel submission)
     if request.method == 'POST':
         if 'file' not in request.files:
             flash("No file selected.", "warning")
@@ -80,7 +80,7 @@ def index():
                 flash(f"Cloud write failure: {str(e)}", "danger")
         return redirect(url_for('index'))
 
-    # Directory Bucket Listing & Parsing
+    # Directory Bucket Listing & Category Parsing
     vault_data = {
         'pictures': [],
         'pdfs': [],
@@ -122,6 +122,7 @@ def download_file(filename, category=None):
         if not mime_type:
             mime_type = 'application/octet-stream'
 
+        # Default browser behavior: 'inline' lets users view pictures/PDFs/Videos inside the browser tab
         disposition = 'inline'
         if category and category not in ['pictures', 'pdfs', 'videos']:
             disposition = f'attachment; filename="{filename}"'
