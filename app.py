@@ -48,10 +48,40 @@ def logout():
     session.clear()
     return redirect(url_for('login'))
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 @login_required
 def index():
-    categories = {
+    # Dynamic Upload Form Handler (Dashboard left panel)
+    if request.method == 'POST':
+        if 'file' not in request.files:
+            flash("No file selected.", "warning")
+            return redirect(url_for('index'))
+            
+        file = request.files['file']
+        if file.filename == '':
+            flash("No file selected.", "warning")
+            return redirect(url_for('index'))
+
+        if file:
+            filename = file.filename
+            mime_type, _ = mimetypes.guess_type(filename)
+            if not mime_type:
+                mime_type = 'application/octet-stream'
+
+            try:
+                s3_client.upload_fileobj(
+                    file,
+                    B2_BUCKET_NAME,
+                    filename,
+                    ExtraArgs={'ContentType': mime_type}
+                )
+                flash(f"'{filename}' successfully uploaded directly to vault.", "success")
+            except Exception as e:
+                flash(f"Cloud write failure: {str(e)}", "danger")
+        return redirect(url_for('index'))
+
+    # Directory Bucket Listing & Parsing
+    vault_data = {
         'pictures': [],
         'pdfs': [],
         'videos': [],
@@ -68,97 +98,53 @@ def index():
             ext = os.path.splitext(filename)[1].lower()
             
             if ext in ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg']:
-                categories['pictures'].append(filename)
+                vault_data['pictures'].append(filename)
             elif ext == '.pdf':
-                categories['pdfs'].append(filename)
+                vault_data['pdfs'].append(filename)
             elif ext in ['.mp4', '.mov', '.avi', '.mkv', '.webm']:
-                categories['videos'].append(filename)
+                vault_data['videos'].append(filename)
             elif ext in ['.txt', '.docx', '.xlsx', '.pptx', '.csv', '.md']:
-                categories['documents'].append(filename)
+                vault_data['documents'].append(filename)
             else:
-                categories['others'].append(filename)
+                vault_data['others'].append(filename)
                 
     except Exception as e:
         flash(f"Error fetching directory index from Cloud: {str(e)}", "danger")
 
-    return render_template('index.html', categories=categories)
+    return render_template('dashboard.html', vault_data=vault_data)
 
-@app.route('/upload', methods=['POST'])
+@app.route('/download/<path:filename>')
+@app.route('/download/<string:category>/<path:filename>')
 @login_required
-def upload():
-    if 'file' not in request.files:
-        flash("No file selected.", "warning")
-        return redirect(url_for('index'))
-        
-    file = request.files['file']
-    if file.filename == '':
-        flash("No file selected.", "warning")
-        return redirect(url_for('index'))
-
-    if file:
-        filename = file.filename
-        mime_type, _ = mimetypes.guess_type(filename)
-        if not mime_type:
-            mime_type = 'application/octet-stream'
-
-        try:
-            s3_client.upload_fileobj(
-                file,
-                B2_BUCKET_NAME,
-                filename,
-                ExtraArgs={'ContentType': mime_type}
-            )
-            flash(f"'{filename}' successfully uploaded directly to vault.", "success")
-        except Exception as e:
-            flash(f"Cloud write failure: {str(e)}", "danger")
-            
-    return redirect(url_for('index'))
-
-@app.route('/view/<path:filename>')
-@login_required
-def view_file(filename):
+def download_file(filename, category=None):
     try:
         mime_type, _ = mimetypes.guess_type(filename)
         if not mime_type:
             mime_type = 'application/octet-stream'
+
+        disposition = 'inline'
+        if category and category not in ['pictures', 'pdfs', 'videos']:
+            disposition = f'attachment; filename="{filename}"'
 
         url = s3_client.generate_presigned_url(
             'get_object',
             Params={
                 'Bucket': B2_BUCKET_NAME,
                 'Key': filename,
-                'ResponseContentDisposition': 'inline',
+                'ResponseContentDisposition': disposition,
                 'ResponseContentType': mime_type
             },
             ExpiresIn=3600
         )
         return redirect(url)
     except Exception as e:
-        flash(f"Could not generate preview link: {str(e)}", "danger")
+        flash(f"Could not generate access link: {str(e)}", "danger")
         return redirect(url_for('index'))
 
-@app.route('/download/<path:filename>')
-@login_required
-def download_file(filename):
-    try:
-        url = s3_client.generate_presigned_url(
-            'get_object',
-            Params={
-                'Bucket': B2_BUCKET_NAME,
-                'Key': filename,
-                'ResponseContentDisposition': f'attachment; filename="{filename}"'
-            },
-            ExpiresIn=3600
-        )
-        return redirect(url)
-    except Exception as e:
-        flash(f"Could not generate download link: {str(e)}", "danger")
-        return redirect(url_for('index'))
-
-# --- BULLETPROOF DELETION ROUTE (Accepts both GET and POST) ---
 @app.route('/delete/<path:filename>', methods=['GET', 'POST'])
+@app.route('/delete/<string:category>/<path:filename>', methods=['GET', 'POST'])
 @login_required
-def delete_file(filename):
+def delete_file(filename, category=None):
     try:
         s3_client.delete_object(Bucket=B2_BUCKET_NAME, Key=filename)
         flash(f"'{filename}' was permanently removed from storage.", "success")

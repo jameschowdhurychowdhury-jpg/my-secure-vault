@@ -6,29 +6,166 @@
     <title>Vault Authentication</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        body { height: 100vh; display: flex; align-items: center; justify-content: center; background-color: #f4f6f9; }
-        .login-card { width: 100%; max-width: 400px; padding: 30px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); background: #fff; }
+        /* Base Scene Architecture Setup */
+        body { 
+            height: 100vh; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            background-color: #0b0e14;
+            perspective: 1500px; /* High perspective for pronounced 3D depths */
+            overflow: hidden;
+            margin: 0;
+            padding: 15px;
+            user-select: none; /* Prevents text selection highlighting while dragging */
+        }
+
+        /* 3D Global Space Canvas Container Wrapper */
+        .scene-3d-container {
+            width: 100%;
+            max-width: 420px;
+            transform-style: preserve-3d;
+            will-change: transform;
+            transition: transform 0.1s ease-out; /* Smooths out manual movements */
+        }
+
+        /* 3D Card Structural Component Design */
+        .login-card { 
+            width: 100%; 
+            padding: 35px 30px; 
+            border-radius: 16px; 
+            background: rgba(22, 27, 38, 0.95); 
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+            backface-visibility: visible;
+            transform: translateZ(0px); 
+            user-select: auto; /* Allows typing inside inputs normally */
+        }
+
+        /* Form Custom Aesthetic Styling */
+        .form-control {
+            background-color: #111622 !important;
+            border: 1px solid #2d3748 !important;
+            color: #ffffff !important;
+            padding: 12px;
+        }
+
+        .form-control:focus {
+            border-color: #3182ce !important;
+            box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.3) !important;
+        }
+
+        .btn-primary {
+            background-color: #3182ce !important;
+            border: none !important;
+            padding: 12px;
+            box-shadow: 0 4px 14px rgba(49, 130, 206, 0.4);
+        }
+
+        /* Fluid Mobile Layout Adjustments */
+        @media (max-width: 480px) {
+            .login-card {
+                padding: 25px 20px;
+            }
+            body {
+                perspective: 1000px; 
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="login-card">
-        <h3 class="text-center mb-2 fw-bold">🔒 Secure Vault</h3>
-        <p class="text-muted text-center small mb-4">Enter master password to access encrypted workspace</p>
-        
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="alert alert-danger p-2 small text-center" role="alert">{{ message }}</div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
+    
+    <div class="scene-3d-container" id="vaultCard">
+        <div class="login-card">
+            <h3 class="text-center mb-2 fw-bold text-white">🔒 Secure Vault</h3>
+            <p class="text-center small mb-4" style="color: #a0aec0;">Drag or swipe anywhere to rotate the vault vault</p>
+            
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-danger p-2 small text-center border-0 text-white bg-danger bg-opacity-70" role="alert">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
 
-        <form action="{{ url_for('login') }}" method="POST">
-            <div class="mb-3">
-                <input type="password" name="password" class="form-control" placeholder="Master Password" required autofocus>
-            </div>
-            <button type="submit" class="btn btn-primary w-100 fw-medium">Unlock Vault</button>
-        </form>
+            <form action="{{ url_for('login') }}" method="POST">
+                <div class="mb-3">
+                    <input type="password" name="password" class="form-control" placeholder="Master Password" required autofocus>
+                </div>
+                <button type="submit" class="btn btn-primary w-100 fw-semibold">Unlock Vault</button>
+            </form>
+        </div>
     </div>
+
+    <script>
+        const card = document.getElementById('vaultCard');
+        let isDragging = false;
+        let previousX = 0;
+        let previousY = 0;
+        
+        // Tracks current 3D rotation angles
+        let currentRotationY = 0;
+        let currentRotationX = 0;
+
+        // --- MOUSE TRACKING EVENTS (PC) ---
+        window.addEventListener('mousedown', (e) => {
+            // Don't trigger 3D drag rotation if clicking inside input fields or button
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'BUTTON') return;
+            isDragging = true;
+            previousX = e.clientX;
+            previousY = e.clientY;
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            
+            const deltaX = e.clientX - previousX;
+            const deltaY = e.clientY - previousY;
+
+            // Adjust sensitivity multipliers here (0.5 balances control smoothly)
+            currentRotationY += deltaX * 0.5;
+            currentRotationX -= deltaY * 0.5;
+
+            // Clamp vertical rotation so it doesn't flip completely upside down
+            currentRotationX = Math.max(-45, Math.min(45, currentRotationX));
+
+            card.style.transform = `rotateY(${currentRotationY}deg) rotateX(${currentRotationX}deg)`;
+
+            previousX = e.clientX;
+            previousY = e.clientY;
+        });
+
+        window.addEventListener('mouseup', () => isDragging = false);
+
+        // --- TOUCH TRACKING EVENTS (PHONE) ---
+        window.addEventListener('touchstart', (e) => {
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'BUTTON') return;
+            isDragging = true;
+            previousX = e.touches[0].clientX;
+            previousY = e.touches[0].clientY;
+        });
+
+        window.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+
+            const deltaX = e.touches[0].clientX - previousX;
+            const deltaY = e.touches[0].clientY - previousY;
+
+            currentRotationY += deltaX * 0.6;
+            currentRotationX -= deltaY * 0.6;
+            
+            currentRotationX = Math.max(-45, Math.min(45, currentRotationX));
+
+            card.style.transform = `rotateY(${currentRotationY}deg) rotateX(${currentRotationX}deg)`;
+
+            previousX = e.touches[0].clientX;
+            previousY = e.touches[0].clientY;
+        });
+
+        window.addEventListener('touchend', () => isDragging = false);
+    </script>
+
 </body>
 </html>

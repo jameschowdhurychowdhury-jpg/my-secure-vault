@@ -5,13 +5,106 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vault Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body class="bg-light">
+    <style>
+        /* Cyber Vault Premium Dark Layout */
+        body { 
+            background-color: #0e121a; 
+            color: #e2e8f0;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+        
+        .navbar { 
+            background-color: #161b26 !important; 
+            border-bottom: 1px solid #2d3748;
+        }
 
-<nav class="navbar navbar-dark bg-dark mb-4 shadow-sm">
+        /* Glassmorphism Cards */
+        .card { 
+            background: #161b26;
+            border: 1px solid #2d3748;
+            border-radius: 12px; 
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3); 
+            color: #e2e8f0;
+        }
+        
+        /* Navigation Pills Controls */
+        .nav-pills .nav-link { 
+            border: 1px solid #2d3748; 
+            color: #a0aec0; 
+            margin-right: 6px; 
+            margin-bottom: 6px;
+            background-color: #1e2533; 
+            transition: all 0.2s ease;
+        }
+        
+        .nav-pills .nav-link:hover {
+            color: #fff;
+            background-color: #2d3748;
+        }
+
+        .nav-pills .nav-link.active { 
+            background-color: #3182ce; 
+            color: #fff; 
+            border-color: #3182ce; 
+            box-shadow: 0 0 12px rgba(49, 130, 206, 0.4);
+        }
+        
+        /* Modernized Interactive Table Overhaul */
+        .table {
+            color: #e2e8f0 !important;
+            border-color: #2d3748;
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: #1e2533 !important;
+        }
+
+        .table-light th {
+            background-color: #111622 !important;
+            color: #718096 !important;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+            border-bottom: 2px solid #2d3748;
+        }
+
+        .tab-content-wrapper {
+            background-color: #111622; 
+            border: 1px solid #2d3748; 
+            border-radius: 8px; 
+            padding: 15px;
+        }
+
+        .form-control {
+            background-color: #111622;
+            border: 1px solid #2d3748;
+            color: #fff;
+        }
+
+        .form-control:focus {
+            background-color: #111622;
+            border-color: #3182ce;
+            color: #fff;
+            box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.25);
+        }
+
+        .empty-placeholder {
+            background-color: #111622 !important;
+            border: 2px dashed #2d3748 !important;
+            color: #718096 !important;
+        }
+
+        .text-muted {
+            color: #718096 !important;
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-dark mb-4 shadow-sm p-3">
     <div class="container">
-        <span class="navbar-brand mb-0 h1">🔐 Private Sorted Vault</span>
-        <a href="{{ url_for('logout') }}" class="btn btn-outline-light btn-sm">Lock Vault</a>
+        <span class="navbar-brand mb-0 h1 fw-bold text-white">🔐 Private Sorted Vault</span>
+        <a href="{{ url_for('logout') }}" class="btn btn-outline-danger btn-sm px-3 fw-semibold">Lock Vault</a>
     </div>
 </nav>
 
@@ -19,9 +112,9 @@
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
         {% for category, message in messages %}
-          <div class="alert alert-{{ category }} alert-dismissible fade show shadow-sm" role="alert">
+          <div class="alert alert-{{ category if category != 'error' else 'danger' }} bg-dark text-white border-secondary alert-dismissible fade show shadow-sm" role="alert">
             {{ message }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
           </div>
         {% endfor %}
       {% endif %}
@@ -29,21 +122,21 @@
 
     <div class="row g-4">
         <div class="col-lg-4">
-            <div class="card p-4 border-0 shadow-sm sticky-top" style="top: 20px; z-index: 100;">
-                <h5 class="card-title text-secondary mb-3">Upload New Item</h5>
-                <form method="POST" enctype="multipart/form-data">
+            <div class="card p-4">
+                <h5 class="card-title text-white mb-3 fw-semibold">Upload New Item</h5>
+                <form method="POST" enctype="multipart/form-data" action="{{ url_for('index') }}">
                     <div class="mb-3">
                         <input class="form-control" type="file" id="formFile" name="file" required>
-                        <div class="form-text">System auto-detects pictures, PDFs, videos, and documents.</div>
+                        <div class="form-text text-muted mt-2">System auto-detects pictures, PDFs, videos, and documents.</div>
                     </div>
-                    <button type="submit" class="btn btn-primary w-100">Upload to Vault</button>
+                    <button type="submit" class="btn btn-primary w-100 fw-semibold">Upload to Vault</button>
                 </form>
             </div>
         </div>
 
         <div class="col-lg-8">
-            <div class="card p-4 border-0 shadow-sm">
-                <h5 class="card-title text-secondary mb-4">Your Categorized Storage</h5>
+            <div class="card p-4">
+                <h5 class="card-title text-white mb-4 fw-semibold">Your Categorized Storage</h5>
                 
                 <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
                     {% for category in vault_data.keys() %}
@@ -54,20 +147,20 @@
                                 data-bs-target="#pill-{{ category }}" 
                                 type="button" role="tab">
                             {{ category }} 
-                            <span class="badge bg-secondary ms-1">{{ vault_data[category]|length }}</span>
+                            <span class="badge bg-dark text-secondary ms-1">{{ vault_data[category]|length }}</span>
                         </button>
                     </li>
                     {% endfor %}
                 </ul>
                 
-                <div class="tab-content" id="pills-tabContent">
+                <div class="tab-content tab-content-wrapper" id="pills-tabContent">
                     {% for category, files in vault_data.items() %}
                     <div class="tab-pane fade {% if loop.first %}show active{% endif %} pt-2" 
                          id="pill-{{ category }}" role="tabpanel">
                         
                         {% if files %}
                             <div class="table-responsive">
-                                <table class="table table-hover align-middle">
+                                <table class="table align-middle m-0">
                                     <thead class="table-light">
                                         <tr>
                                             <th>File Name</th>
@@ -77,7 +170,7 @@
                                     <tbody>
                                         {% for file in files %}
                                         <tr>
-                                            <td class="text-break">
+                                            <td class="text-break text-white-50">
                                                 {% if category == 'pictures' %}🖼️ 
                                                 {% elif category == 'pdfs' %}📄 
                                                 {% elif category == 'videos' %}🎬 
@@ -88,7 +181,7 @@
                                             <td class="text-end">
                                                 <div class="d-inline-flex gap-2">
                                                     <a href="{{ url_for('download_file', category=category, filename=file) }}" 
-                                                       target="_blank" class="btn btn-sm btn-outline-secondary">View</a>
+                                                       target="_blank" class="btn btn-sm btn-outline-info">View</a>
                                                     
                                                     <form action="{{ url_for('delete_file', category=category, filename=file) }}" 
                                                           method="POST" 
@@ -103,8 +196,8 @@
                                 </table>
                             </div>
                         {% else %}
-                            <div class="text-center py-5 text-muted bg-light rounded border border-dashed">
-                                <p class="mb-0">No entries under "{{ category.capitalize() }}" section.</p>
+                            <div class="text-center py-5 empty-placeholder rounded">
+                                <p class="mb-0">No entries found inside "{{ category.capitalize() }}".</p>
                             </div>
                         {% endif %}
                     </div>
