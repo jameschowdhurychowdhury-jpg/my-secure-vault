@@ -76,7 +76,7 @@
             will-change: transform;
         }
 
-        /* Front-Facing Volumetric Panels */
+        /* Front-Facing Panels */
         .panel {
             position: absolute;
             width: 260px;
@@ -95,7 +95,7 @@
             overflow: hidden;
         }
 
-        /* OVERHAULED BACKING PANELS: Pure Robotic Engine Core Layout (No Text Headers) */
+        /* Cleaned Mechanical Back Faces */
         .panel-back-hologram {
             position: absolute;
             width: 260px;
@@ -114,7 +114,7 @@
             overflow: hidden;
         }
 
-        /* Geometric Trigonometric Offset Rules (Front) */
+        /* 3D Spacing Positions */
         .face-1 { transform: rotateY(0deg) translateZ(225px); }
         .face-2 { transform: rotateY(60deg) translateZ(225px); }
         .face-3 { transform: rotateY(120deg) translateZ(225px); }
@@ -122,7 +122,6 @@
         .face-5 { transform: rotateY(240deg) translateZ(225px); }
         .face-6 { transform: rotateY(300deg) translateZ(225px); }
 
-        /* Counter-rotated Backing Panels */
         .back-face-1 { transform: rotateY(180deg) translateZ(-224px); }
         .back-face-2 { transform: rotateY(240deg) translateZ(-224px); }
         .back-face-3 { transform: rotateY(300deg) translateZ(-224px); }
@@ -130,13 +129,14 @@
         .back-face-5 { transform: rotateY(60deg) translateZ(-224px); }
         .back-face-6 { transform: rotateY(120deg) translateZ(-224px); }
 
-        /* User Picture Background Placement Selector */
+        /* Background Image Hook */
         .user-avatar-bg {
             background: linear-gradient(rgba(10, 15, 30, 0.85), rgba(10, 15, 30, 0.85)), 
                         url("{{ url_for('static', filename='bg-profile.jpg') }}") no-repeat center center;
             background-size: cover;
         }
 
+        /* Primary Form Styles */
         .panel-header {
             text-align: center;
             border-bottom: 1px dashed var(--border);
@@ -207,15 +207,7 @@
             background: rgba(239, 68, 68, 0.1);
         }
 
-        .data-stream {
-            font-size: 0.7rem;
-            color: #475569;
-            line-height: 1.4;
-        }
-
-        /* ==================== RUNNING ROBOTIC MECHANICS (ANIMATIONS) ==================== */
-        
-        /* 1. Robotic Scanline Wave */
+        /* ==================== RUNNING ROBOTIC MECHANICS ==================== */
         .robot-laser-scanner {
             position: absolute;
             top: 0;
@@ -227,14 +219,14 @@
             animation: laserScan 3s infinite ease-in-out;
         }
 
-        /* 2. Concentric Mechanical Rings */
         .servo-ring-assembly {
             position: relative;
-            width: 100px;
-            height: 100px;
+            width: 110px;
+            height: 110px;
             display: flex;
             align-items: center;
             justify-content: center;
+            margin: auto 0;
         }
         .outer-gear {
             position: absolute;
@@ -253,52 +245,52 @@
             animation: spinCounterClockwise 4s infinite linear;
         }
         .core-node {
-            width: 20%;
-            height: 20%;
+            width: 22%;
+            height: 22%;
             background: #fff;
             border-radius: 50%;
             box-shadow: 0 0 20px var(--neon);
             animation: corePulse 1.5s infinite ease-in-out;
         }
 
-        /* 3. Equalizer / Mechanical Load Bars */
         .robotic-matrix-grid {
             display: flex;
-            gap: 6px;
+            gap: 7px;
             align-items: flex-end;
-            height: 60px;
+            height: 75px;
             width: 100%;
             justify-content: center;
+            margin-bottom: 1rem;
         }
         .matrix-column {
-            width: 8px;
+            width: 9px;
             background: linear-gradient(to top, var(--accent), var(--neon));
             border-radius: 2px;
             animation: computationalWave 1.2s infinite ease-in-out;
         }
-        .matrix-column:nth-child(2) { animation-delay: 0.2s; height: 40%; }
-        .matrix-column:nth-child(3) { animation-delay: 0.4s; height: 75%; }
-        .matrix-column:nth-child(4) { animation-delay: 0.1s; height: 50%; }
-        .matrix-column:nth-child(5) { animation-delay: 0.6s; height: 90%; }
-        .matrix-column:nth-child(6) { animation-delay: 0.3s; height: 30%; }
+        .matrix-column:nth-child(2) { animation-delay: 0.2s; }
+        .matrix-column:nth-child(3) { animation-delay: 0.4s; }
+        .matrix-column:nth-child(4) { animation-delay: 0.1s; }
+        .matrix-column:nth-child(5) { animation-delay: 0.6s; }
+        .matrix-column:nth-child(6) { animation-delay: 0.3s; }
 
-        /* 4. Binary/Hex Stream blocks */
         .data-chassis-loader {
             width: 100%;
-            height: 40px;
+            height: 35px;
             border: 1px solid rgba(0, 242, 254, 0.15);
-            background: rgba(0,0,0,0.4);
+            background: rgba(0,0,0,0.5);
             position: relative;
             border-radius: 4px;
             overflow: hidden;
+            margin-top: auto;
         }
         .chassis-fill {
             height: 100%;
-            width: 40%;
+            width: 45%;
             background: rgba(0, 242, 254, 0.15);
             border-right: 2px solid var(--neon);
             position: absolute;
-            left: -40%;
+            left: -45%;
             animation: loopChassis 2.5s infinite linear;
         }
 
@@ -313,13 +305,12 @@
             line-height: 1.6;
         }
 
-        /* Animation Matrices */
         @keyframes spinClockwise { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         @keyframes spinCounterClockwise { from { transform: rotate(360deg); } to { transform: rotate(0deg); } }
-        @keyframes laserScan { 0%, 100% { top: 0%; opacity: 0.3; } 50% { top: 100%; opacity: 1; } }
+        @keyframes laserScan { 0%, 100% { top: 0%; opacity: 0.2; } 50% { top: 100%; opacity: 1; } }
         @keyframes corePulse { 0%, 100% { transform: scale(0.8); opacity: 0.5; } 50% { transform: scale(1.2); opacity: 1; } }
-        @keyframes computationalWave { 0%, 100% { height: 20%; } 50% { height: 95%; } }
-        @keyframes loopChassis { from { left: -40%; } to { left: 100%; } }
+        @keyframes computationalWave { 0%, 100% { height: 15%; } 50% { height: 95%; } }
+        @keyframes loopChassis { from { left: -45%; } to { left: 100%; } }
     </style>
 </head>
 <body>
@@ -360,67 +351,46 @@
             </div>
 
             <div class="panel face-2 user-avatar-bg">
-                <div class="panel-header">
-                    <h3>DATA_LOG_02</h3>
-                    <span>LIVE SYSTEM INTEGRITY</span>
+                <div class="servo-ring-assembly">
+                    <div class="outer-gear"></div><div class="inner-gear"></div><div class="core-node"></div>
                 </div>
-                <div class="data-stream">
-                    > BOOT_SEQUENCE: OK<br>
-                    > PROXY_MATRIX: ENCRYPTED<br>
-                    > PORTAL_ROTATION: 360_ACTIVE<br>
-                    > GEOMETRY_CALCULUS: STABLE<br>
-                    > HARDWARE_ACCEL: TRUE<br>
-                    > PERIPHERAL_SYNC: READY
-                </div>
-                <div style="font-size:0.65rem; color:var(--neon); text-align:center;">NODE STATUS: STANDBY</div>
+                <div class="data-chassis-loader"><div class="chassis-fill"></div></div>
             </div>
 
             <div class="panel face-3 user-avatar-bg">
-                <div class="panel-header">
-                    <h3>SYS_DIAG_03</h3>
-                    <span>HARDWARE COMPLIANCE</span>
+                <div class="robotic-matrix-grid">
+                    <div class="matrix-column" style="height: 30%"></div><div class="matrix-column" style="height: 75%"></div>
+                    <div class="matrix-column" style="height: 40%"></div><div class="matrix-column" style="height: 90%"></div>
+                    <div class="matrix-column" style="height: 55%"></div>
                 </div>
-                <div style="display:flex; justify-content:center; align-items:center; height:100%; flex-direction:column; gap:1rem;">
-                    <div style="width:70px; height:70px; border:3px dashed var(--neon); border-radius:50%; animation: spinClockwise 10s linear infinite;"></div>
-                    <span style="font-size:0.7rem; color:#64748b;">COMPUTING SEGMENTS...</span>
-                </div>
+                <div class="servo-ring-assembly" style="transform: scale(0.7);"><div class="outer-gear" style="animation-direction: reverse;"></div><div class="core-node" style="background:var(--accent);"></div></div>
             </div>
 
             <div class="panel face-4 user-avatar-bg">
-                <div class="panel-header">
-                    <h3>OVERRIDE_04</h3>
-                    <span>REAR BACKUP ACCESS</span>
+                <div class="robot-laser-scanner"></div>
+                <div class="data-chassis-loader"><div class="chassis-fill" style="animation-duration: 1.5s;"></div></div>
+                <div class="robotic-matrix-grid">
+                    <div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div>
+                    <div class="matrix-column"></div>
                 </div>
-                <div class="input-block">
-                    <label>Emergency Key</label>
-                    <input type="password" placeholder="MASTER_TOKEN" disabled>
-                </div>
-                <button type="button" class="action-trigger" style="background:transparent; border:1px solid #ef4444; color:#ef4444; cursor: not-allowed;">Force Flush</button>
             </div>
 
             <div class="panel face-5 user-avatar-bg">
-                <div class="panel-header">
-                    <h3>NET_PROTOCOL_05</h3>
-                    <span>BANDWIDTH ROUTING MAP</span>
+                <div class="servo-ring-assembly" style="transform: scale(0.85);">
+                    <div class="outer-gear"></div><div class="inner-gear" style="animation-direction: reverse;"></div><div class="core-node"></div>
                 </div>
-                <div class="data-stream" style="color:var(--accent)">
-                    IP.SRC // 192.168.1.100<br>
-                    GATEWAY // 10.0.0.1<br>
-                    SUBNET // 255.255.255.0<br>
-                    DNS.MATRIX // 8.8.8.8
-                </div>
-                <div style="width:100%; height:4px; background:rgba(255,255,255,0.1); border-radius:2px; overflow:hidden;">
-                    <div style="width:75%; height:100%; background:var(--neon)"></div>
+                <div class="robotic-matrix-grid">
+                    <div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div>
                 </div>
             </div>
 
             <div class="panel face-6 user-avatar-bg">
-                <div class="panel-header">
-                    <h3>DB_CLUSTER_06</h3>
-                    <span>MEMPOOL REPLICATION</span>
+                <div class="robot-laser-scanner" style="background: var(--accent); box-shadow: 0 0 15px var(--accent);"></div>
+                <div class="robotic-matrix-grid">
+                    <div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div>
+                    <div class="matrix-column"></div><div class="matrix-column"></div>
                 </div>
-                <div style="text-align:center; font-size:2rem; font-weight:bold; color:var(--neon);">99.98%</div>
-                <div style="font-size:0.65rem; color:#64748b; text-align:center;">REDUNDANCY INTEGRATION COMPLETENESS</div>
+                <div class="data-chassis-loader"><div class="chassis-fill" style="animation-delay: 0.5s;"></div></div>
             </div>
 
 
