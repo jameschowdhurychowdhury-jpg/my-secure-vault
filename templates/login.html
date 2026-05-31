@@ -79,13 +79,18 @@
             will-change: transform;
         }
 
-        /* Individual Dimensional Structural Panels */
+        /* Individual Dimensional Structural Panels with Transparent Image Integration */
         .panel {
             position: absolute;
             width: 260px;
             height: 380px;
             left: 70px; /* Center within parent container */
-            background: var(--glass);
+            
+            /* TRANSPARENT MOD IMAGE: Combines a translucent dark layer with your static profile image */
+            background: linear-gradient(rgba(10, 15, 30, 0.85), rgba(10, 15, 30, 0.85)), 
+                        url("{{ url_for('static', filename='bg-profile.jpg') }}") no-repeat center center;
+            background-size: cover;
+            
             border: 2px solid var(--border);
             border-radius: 16px;
             padding: 2rem 1.5rem;
@@ -318,15 +323,14 @@
         const teleY = document.getElementById('tele-y');
 
         let isInteracting = false;
-        let currentX = -15; // Set an initial display angle pitch down
-        let currentY = -25; // Set an initial display rotation offset angle
+        let currentX = -15; 
+        let currentY = -25; 
         let previousMouseX = 0;
         let previousMouseY = 0;
 
         let targetX = currentX;
         let targetY = currentY;
 
-        // Mouse & Touch Physics Interaction Listeners
         const startInteraction = (clientX, clientY) => {
             isInteracting = true;
             previousMouseX = clientX;
@@ -339,10 +343,9 @@
             const deltaMouseX = clientX - previousMouseX;
             const deltaMouseY = clientY - previousMouseY;
 
-            targetY += deltaMouseX * 0.5; // Horizontal rotation path
-            targetX -= deltaMouseY * 0.5; // Vertical pitch path
+            targetY += deltaMouseX * 0.5; 
+            targetX -= deltaMouseY * 0.5; 
 
-            // Prevent cylinder from flipping totally upside down for better UX
             targetX = Math.max(-45, Math.min(45, targetX));
 
             previousMouseX = clientX;
@@ -353,12 +356,10 @@
         window.addEventListener('mousemove', (e) => moveInteraction(e.clientX, e.clientY));
         window.addEventListener('mouseup', () => { isInteracting = false; });
 
-        // Touch device compliance support
         window.addEventListener('touchstart', (e) => startInteraction(e.touches[0].clientX, e.touches[0].clientY));
         window.addEventListener('touchmove', (e) => moveInteraction(e.touches[0].clientX, e.touches[0].clientY));
         window.addEventListener('touchend', () => { isInteracting = false; });
 
-        // Hardware Renderer Calculation Loop
         function execute3DTransformationTick() {
             currentX += (targetX - currentX) * 0.1;
             currentY += (targetY - currentY) * 0.1;
