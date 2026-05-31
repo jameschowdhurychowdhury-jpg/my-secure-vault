@@ -136,7 +136,9 @@
                                 id="pill-{{ category }}-tab" 
                                 data-bs-toggle="pill" 
                                 data-bs-target="#pill-{{ category }}" 
-                                type="button" role="tab">
+                                type="button" role="tab" 
+                                aria-controls="pill-{{ category }}" 
+                                aria-selected="{% if loop.first %}true{% else %}false{% endif %}">
                             {{ category }} 
                             <span class="badge bg-dark text-secondary ms-1">{{ vault_data[category]|length }}</span>
                         </button>
@@ -147,15 +149,15 @@
                 <div class="tab-content tab-content-wrapper" id="pills-tabContent">
                     {% for category, files in vault_data.items() %}
                     <div class="tab-pane fade {% if loop.first %}show active{% endif %} pt-2" 
-                         id="pill-{{ category }}" role="tabpanel">
+                         id="pill-{{ category }}" role="tabpanel" aria-labelledby="pill-{{ category }}-tab">
                         
                         {% if files %}
                             <div class="table-responsive">
                                 <table class="table table-dark table-hover align-middle m-0">
                                     <thead>
                                         <tr style="border-bottom: 2px solid #2d3748;">
-                                            <th style="background-color: #111622; color: #718096; font-size: 0.75rem; uppercase; tracking: 0.05em;">File Name</th>
-                                            <th style="background-color: #111622; color: #718096; font-size: 0.75rem; uppercase; tracking: 0.05em;" class="text-end">Actions</th>
+                                            <th style="background-color: #111622; color: #718096; font-size: 0.75rem; text-transform: uppercase; tracking: 0.05em;">File Name</th>
+                                            <th style="background-color: #111622; color: #718096; font-size: 0.75rem; text-transform: uppercase; tracking: 0.05em;" class="text-end">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>

@@ -1,0 +1,344 @@
+/* =========================================================================
+   GLOBAL RESET AND CORE VARIABLES
+   ========================================================================= */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    user-select: none;
+}
+
+body, html {
+    background-color: #010408;
+    color: #00f3ff;
+    font-family: 'Courier New', Courier, monospace;
+    height: 100%;
+    overflow: hidden;
+    width: 100%;
+}
+
+#masterRenderCanvas {
+    display: block;
+    height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    z-index: 1;
+}
+
+/* =========================================================================
+   INTERFACE OVERLAY & HUD ELEMENTS
+   ========================================================================= */
+.hud-interface-banner {
+    background: linear-gradient(to bottom, rgba(1, 8, 15, 0.85), rgba(0,0,0,0));
+    left: 0;
+    padding: 24px 32px;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    z-index: 10;
+}
+
+.hud-title-block {
+    align-items: center;
+    display: flex;
+    gap: 12px;
+}
+
+.hud-title-block h2 {
+    color: #00f3ff;
+    font-size: 18px;
+    letter-spacing: 3px;
+    text-shadow: 0 0 10px rgba(0, 243, 255, 0.6);
+}
+
+.hud-status-node {
+    animation: diagnosticPulse 2s infinite ease-in-out;
+    background-color: #00f3ff;
+    border-radius: 50%;
+    box-shadow: 0 0 8px #00f3ff;
+    height: 8px;
+    width: 8px;
+}
+
+#systemGuideText {
+    color: rgba(0, 243, 255, 0.6);
+    font-size: 11px;
+    margin-top: 4px;
+}
+
+/* =========================================================================
+   TELEMETRY AND METRICS DECK
+   ========================================================================= */
+.telemetry-data-deck {
+    bottom: 80px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    left: 32px;
+    position: absolute;
+    z-index: 10;
+}
+
+.telemetry-row {
+    display: flex;
+    font-size: 11px;
+    gap: 16px;
+}
+
+.telemetry-row span:first-child { 
+    color: rgba(0, 243, 255, 0.4); 
+}
+
+.telemetry-row span:last-child { 
+    color: #00a2ff; 
+}
+
+.val-warn { 
+    animation: warningFlash 1s infinite alternate step-end; 
+    font-weight: bold; 
+}
+
+/* =========================================================================
+   INTERACTIVE FLOATING CENTER NODE & ORBITAL RINGS
+   ========================================================================= */
+#interactiveUprockRegion {
+    cursor: pointer;
+    height: 90px;
+    position: absolute;
+    transform: translate(-50%, -50%);
+    width: 90px;
+    z-index: 20;
+}
+
+.runic-seal-core {
+    align-items: center;
+    display: flex;
+    height: 100%;
+    justify-content: center;
+    position: relative;
+    width: 100%;
+}
+
+.rune-glyph {
+    color: #00f3ff;
+    font-size: 28px;
+    text-shadow: 0 0 15px rgba(0, 243, 255, 0.8);
+}
+
+.orbital-ring {
+    border: 1.5px dashed rgba(0, 162, 255, 0.4);
+    border-radius: 50%;
+    left: 50%;
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.or-1 { animation: rotateCW 12s linear infinite; height: 70px; width: 70px; }
+.or-2 { animation: rotateCCW 8s linear infinite; border-style: dotted; height: 90px; width: 90px; }
+
+/* =========================================================================
+   3D HEXAGON CONTAINER AND MATHEMATICAL APOTHEM MATRIX
+   ========================================================================= */
+.shattered-gate-viewport {
+    align-items: center;
+    display: flex;
+    height: 100%;
+    justify-content: center;
+    left: 0;
+    opacity: 0.15;
+    perspective: 1500px; /* Activates 3D spatial field perspective rendering */
+    pointer-events: none;
+    position: absolute;
+    top: 0;
+    transform: scale(0.85);
+    transition: opacity 1.2s ease-out, transform 1.5s cubic-bezier(0.1, 0.9, 0.2, 1);
+    width: 100%;
+    z-index: 5;
+}
+
+.shattered-gate-viewport.summoned {
+    opacity: 1;
+    pointer-events: auto;
+    transform: scale(1);
+}
+
+.spatial-3d-scene {
+    height: 480px;
+    position: relative;
+    transform-style: preserve-3d;
+    width: 320px;
+}
+
+.hexagonal-prism-container {
+    height: 100%;
+    position: absolute;
+    transform: rotateX(-12deg) rotateY(0deg);
+    transform-style: preserve-3d;
+    width: 100%;
+}
+
+.prism-face {
+    background: linear-gradient(135deg, rgba(1, 24, 43, 0.65), rgba(1, 10, 22, 0.9));
+    border: 1.5px solid rgba(0, 243, 255, 0.4);
+    box-shadow: inset 0 0 30px rgba(0, 243, 255, 0.2), 0 0 20px rgba(0, 0, 0, 0.8);
+    border-radius: 12px;
+    height: 100%;
+    padding: 32px 24px;
+    position: absolute;
+    width: 100%;
+    backface-visibility: visible; /* Permits clean geometric overlapping rendering */
+}
+
+/* Exact math alignment to form a perfect enclosed hexagon loop */
+.face-primary    { transform: rotateY(0deg) translateZ(277.13px); }
+.face-right-diag { transform: rotateY(60deg) translateZ(277.13px); }
+.face-right-rear { transform: rotateY(120deg) translateZ(277.13px); }
+.face-rear       { transform: rotateY(180deg) translateZ(277.13px); }
+.face-left-rear  { transform: rotateY(240deg) translateZ(277.13px); }
+.face-left-diag  { transform: rotateY(300deg) translateZ(277.13px); }
+
+/* =========================================================================
+   FORM COMPONENTS & INTERFACE INPUTS
+   ========================================================================= */
+.gate-header-block {
+    border-bottom: 1px dotted rgba(0, 243, 255, 0.25);
+    margin-bottom: 30px;
+    padding-bottom: 12px;
+    position: relative;
+}
+
+.gate-header-block h3 { color: #00f3ff; font-size: 16px; letter-spacing: 2px; }
+.gate-header-block p { color: rgba(0, 243, 255, 0.5); font-size: 10px; margin-top: 2px; }
+
+.array-matrix-ping { 
+    animation: diagnosticPulse 1.5s infinite ease-in-out; 
+    background-color: #00f3ff; 
+    border-radius: 50%; 
+    height: 6px; 
+    position: absolute; 
+    right: 0; 
+    top: 6px; 
+    width: 6px; 
+}
+
+.form-array-layout { display: flex; flex-direction: column; gap: 20px; }
+.input-spirit-cell { display: flex; flex-direction: column; gap: 6px; }
+.input-spirit-cell label { color: rgba(0, 243, 255, 0.8); font-size: 11px; letter-spacing: 1px; }
+
+.input-container input {
+    background: rgba(0, 8, 15, 0.75);
+    border: 1px solid rgba(0, 243, 255, 0.3);
+    border-radius: 6px;
+    color: #ffffff;
+    font-family: inherit;
+    font-size: 14px;
+    height: 44px;
+    outline: none;
+    padding: 0 14px;
+    width: 100%;
+}
+
+.input-container input:focus { 
+    border-color: #00f3ff; 
+    box-shadow: 0 0 10px rgba(0, 243, 255, 0.4); 
+}
+
+.summon-btn-trigger {
+    background: linear-gradient(90deg, #00d2ff, #0040ff, #7928ca);
+    border: none;
+    border-radius: 6px;
+    color: #ffffff;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: bold;
+    height: 46px;
+    letter-spacing: 2px;
+    margin-top: 10px;
+    width: 100%;
+}
+
+/* =========================================================================
+   SECONDARY MODULE PANELS & DATA TEMPLATES
+   ========================================================================= */
+.telemetry-readout-panel { color: #00f3ff; }
+.panel-sub { font-size: 9px; color: rgba(0, 243, 255, 0.5); margin-bottom: 24px; }
+.binary-stream-dump { color: rgba(0, 162, 255, 0.7); font-size: 11px; line-height: 1.8; }
+
+.percentage-metric { 
+    font-size: 36px; 
+    font-weight: bold; 
+    margin: 30px 0 10px; 
+    text-shadow: 0 0 10px rgba(0, 243, 255, 0.4); 
+}
+
+.footer-decor-text { font-size: 8px; color: rgba(0, 243, 255, 0.3); }
+.matrix-status-grid { display: flex; flex-direction: column; gap: 8px; margin-top: 40px; }
+.status-line { font-size: 13px; font-weight: bold; }
+.green-text { color: #00ffaa; }
+.blue-text { color: #00a2ff; }
+
+.action-flush-box { 
+    border: 1px solid #ff3333; 
+    color: #ff3333; 
+    display: inline-block; 
+    font-size: 11px; 
+    padding: 8px 16px; 
+    margin-bottom: 20px; 
+}
+
+.cipher-token-label { color: rgba(0, 243, 255, 0.4); font-size: 10px; }
+
+.bar-chart-simulation { 
+    align-items: flex-end; 
+    display: flex; 
+    gap: 12px; 
+    height: 120px; 
+    margin-top: 40px; 
+}
+
+.sim-bar { 
+    background: linear-gradient(to top, #0040ff, #00f3ff); 
+    box-shadow: 0 0 8px rgba(0, 243, 255, 0.4); 
+    width: 24px; 
+}
+
+/* =========================================================================
+   SCENE AMBIENCE & VIGNETTE LAYER
+   ========================================================================= */
+.vignette-shadow-mask {
+    background: radial-gradient(circle, rgba(0,0,0,0) 40%, #010408 100%);
+    height: 100%;
+    left: 0;
+    pointer-events: none;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    z-index: 8;
+}
+
+/* =========================================================================
+   SYSTEM ANIMATIONS DEFINE Matrix
+   ========================================================================= */
+@keyframes diagnosticPulse { 
+    0%, 100% { opacity: 0.4; transform: scale(1); } 
+    50% { opacity: 1; transform: scale(1.2); } 
+}
+
+@keyframes warningFlash { 
+    0%, 49% { color: #ff3333; } 
+    50%, 100% { color: #010408; background-color: #ff3333; } 
+}
+
+@keyframes rotateCW { 
+    0% { transform: translate(-50%, -50%) rotate(0deg); } 
+    100% { transform: translate(-50%, -50%) rotate(360deg); } 
+}
+
+@keyframes rotateCCW { 
+    0% { transform: translate(-50%, -50%) rotate(0deg); } 
+    100% { transform: translate(-50%, -50%) rotate(-360deg); } 
+}

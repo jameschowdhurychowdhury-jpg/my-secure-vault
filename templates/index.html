@@ -41,7 +41,7 @@
             <div class="col-md-4">
                 <div class="card p-4">
                     <h5 class="card-title mb-3 text-secondary fw-semibold">Upload New Item</h5>
-                    <form action="{{ url_for('upload') }}" method="POST" enctype="multipart/form-data">
+                    <form action="{{ url_for('index') }}" method="POST" enctype="multipart/form-data">
                         <div class="mb-3">
                             <input class="form-control" type="file" name="file" id="formFile" required>
                         </div>
@@ -56,129 +56,48 @@
                     <h5 class="card-title mb-3 text-secondary fw-semibold">Your Categorized Storage</h5>
                     
                     <ul class="nav nav-pills mb-4" id="vaultTab" role="tablist">
+                        {% for category in vault_data.keys() %}
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link active" id="pictures-tab" data-bs-toggle="tab" data-bs-target="#pictures" type="button" role="tab">
-                                Pictures <span class="badge bg-secondary ms-1">{{ categories['pictures']|length }}</span>
+                            <button class="nav-link text-capitalize {% if loop.first %}active{% endif %}" 
+                                    id="{{ category }}-tab" 
+                                    data-bs-toggle="tab" 
+                                    data-bs-target="#{{ category }}" 
+                                    type="button" role="tab">
+                                {{ category }} <span class="badge bg-secondary ms-1">{{ vault_data[category]|length }}</span>
                             </button>
                         </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="pdfs-tab" data-bs-toggle="tab" data-bs-target="#pdfs" type="button" role="tab">
-                                Pdfs <span class="badge bg-secondary ms-1">{{ categories['pdfs']|length }}</span>
-                            </button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="videos-tab" data-bs-toggle="tab" data-bs-target="#videos" type="button" role="tab">
-                                Videos <span class="badge bg-secondary ms-1">{{ categories['videos']|length }}</span>
-                            </button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="documents-tab" data-bs-toggle="tab" data-bs-target="#documents" type="button" role="tab">
-                                Documents <span class="badge bg-secondary ms-1">{{ categories['documents']|length }}</span>
-                            </button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="others-tab" data-bs-toggle="tab" data-bs-target="#others" type="button" role="tab">
-                                Others <span class="badge bg-secondary ms-1">{{ categories['others']|length }}</span>
-                            </button>
-                        </li>
+                        {% endfor %}
                     </ul>
 
                     <div class="tab-content" id="vaultTabContent" style="min-height: 200px; background-color: #fff; border: 1px solid #e3e6f0; border-radius: 6px; padding: 15px;">
                         
-                        <div class="tab-pane fade show active" id="pictures" role="tabpanel">
-                            {% if categories['pictures'] %}
-                                {% for file in categories['pictures'] %}
+                        {% for category, files in vault_data.items() %}
+                        <div class="tab-pane fade {% if loop.first %}show active{% endif %}" id="{{ category }}" role="tabpanel">
+                            {% if files %}
+                                {% for file in files %}
                                     <div class="file-item d-flex justify-content-between align-items-center p-2">
-                                        <span class="text-truncate me-3">{{ file }}</span>
+                                        <span class="text-truncate me-3">
+                                            {% if category == 'pictures' %}🖼️ 
+                                            {% elif category == 'pdfs' %}📄 
+                                            {% elif category == 'videos' %}🎬 
+                                            {% elif category == 'documents' %}📝 
+                                            {% else %}📦 {% endif %}
+                                            {{ file }}
+                                        </span>
                                         <div class="d-flex flex-shrink-0 align-items-center">
-                                            <a href="{{ url_for('view_file', filename=file) }}" class="btn btn-sm btn-outline-primary me-2" target="_blank">👁️ View</a>
-                                            <a href="{{ url_for('download_file', filename=file) }}" class="btn btn-sm btn-success me-2">📥 Download</a>
-                                            <form action="{{ url_for('delete_file', filename=file) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to permanently delete this file from the cloud?');">
+                                            <a href="{{ url_for('download_file', category=category, filename=file) }}" class="btn btn-sm btn-outline-primary me-2" target="_blank">👁️ View / Download</a>
+                                            
+                                            <form action="{{ url_for('delete_file', category=category, filename=file) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to permanently delete this file from the cloud?');">
                                                 <button type="submit" class="btn btn-sm btn-danger">🗑️ Delete</button>
                                             </form>
                                         </div>
                                     </div>
                                 {% endfor %}
                             {% else %}
-                                <div class="text-center py-5 text-muted">No entries under "Pictures" section.</div>
+                                <div class="text-center py-5 text-muted">No entries under "{{ category.capitalize() }}" section.</div>
                             {% endif %}
                         </div>
-
-                        <div class="tab-pane fade" id="pdfs" role="tabpanel">
-                            {% if categories['pdfs'] %}
-                                {% for file in categories['pdfs'] %}
-                                    <div class="file-item d-flex justify-content-between align-items-center p-2">
-                                        <span class="text-truncate me-3">{{ file }}</span>
-                                        <div class="d-flex flex-shrink-0 align-items-center">
-                                            <a href="{{ url_for('view_file', filename=file) }}" class="btn btn-sm btn-outline-primary me-2" target="_blank">👁️ View</a>
-                                            <a href="{{ url_for('download_file', filename=file) }}" class="btn btn-sm btn-success me-2">📥 Download</a>
-                                            <form action="{{ url_for('delete_file', filename=file) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to permanently delete this file from the cloud?');">
-                                                <button type="submit" class="btn btn-sm btn-danger">🗑️ Delete</button>
-                                            </form>
-                                        </div>
-                                    </div>
-                                {% endfor %}
-                            {% else %}
-                                <div class="text-center py-5 text-muted">No entries under "Pdfs" section.</div>
-                            {% endif %}
-                        </div>
-
-                        <div class="tab-pane fade" id="videos" role="tabpanel">
-                            {% if categories['videos'] %}
-                                {% for file in categories['videos'] %}
-                                    <div class="file-item d-flex justify-content-between align-items-center p-2">
-                                        <span class="text-truncate me-3">{{ file }}</span>
-                                        <div class="d-flex flex-shrink-0 align-items-center">
-                                            <a href="{{ url_for('view_file', filename=file) }}" class="btn btn-sm btn-outline-primary me-2" target="_blank">👁️ View</a>
-                                            <a href="{{ url_for('download_file', filename=file) }}" class="btn btn-sm btn-success me-2">📥 Download</a>
-                                            <form action="{{ url_for('delete_file', filename=file) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to permanently delete this file from the cloud?');">
-                                                <button type="submit" class="btn btn-sm btn-danger">🗑️ Delete</button>
-                                            </form>
-                                        </div>
-                                    </div>
-                                {% endfor %}
-                            {% else %}
-                                <div class="text-center py-5 text-muted">No entries under "Videos" section.</div>
-                            {% endif %}
-                        </div>
-
-                        <div class="tab-pane fade" id="documents" role="tabpanel">
-                            {% if categories['documents'] %}
-                                {% for file in categories['documents'] %}
-                                    <div class="file-item d-flex justify-content-between align-items-center p-2">
-                                        <span class="text-truncate me-3">{{ file }}</span>
-                                        <div class="d-flex flex-shrink-0 align-items-center">
-                                            <a href="{{ url_for('view_file', filename=file) }}" class="btn btn-sm btn-outline-primary me-2" target="_blank">👁️ View</a>
-                                            <a href="{{ url_for('download_file', filename=file) }}" class="btn btn-sm btn-success me-2">📥 Download</a>
-                                            <form action="{{ url_for('delete_file', filename=file) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to permanently delete this file from the cloud?');">
-                                                <button type="submit" class="btn btn-sm btn-danger">🗑️ Delete</button>
-                                            </form>
-                                        </div>
-                                    </div>
-                                {% endfor %}
-                            {% else %}
-                                <div class="text-center py-5 text-muted">No entries under "Documents" section.</div>
-                            {% endif %}
-                        </div>
-
-                        <div class="tab-pane fade" id="others" role="tabpanel">
-                            {% if categories['others'] %}
-                                {% for file in categories['others'] %}
-                                    <div class="file-item d-flex justify-content-between align-items-center p-2">
-                                        <span class="text-truncate me-3">{{ file }}</span>
-                                        <div class="d-flex flex-shrink-0 align-items-center">
-                                            <a href="{{ url_for('view_file', filename=file) }}" class="btn btn-sm btn-outline-primary me-2" target="_blank">👁️ View</a>
-                                            <a href="{{ url_for('download_file', filename=file) }}" class="btn btn-sm btn-success me-2">📥 Download</a>
-                                            <form action="{{ url_for('delete_file', filename=file) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to permanently delete this file from the cloud?');">
-                                                <button type="submit" class="btn btn-sm btn-danger">🗑️ Delete</button>
-                                            </form>
-                                        </div>
-                                    </div>
-                                {% endfor %}
-                            {% else %}
-                                <div class="text-center py-5 text-muted">No entries under "Others" section.</div>
-                            {% endif %}
-                        </div>
+                        {% endfor %}
 
                     </div>
                 </div>

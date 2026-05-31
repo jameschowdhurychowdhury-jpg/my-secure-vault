@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Optimized Login Terminal - Nature Core</title>
+    <title>True 360° Volumetric Login Node</title>
     <style>
         :root {
-            --neon: #2ecc71;
-            --accent: #27ae60;
-            --bg: #060f0b;
-            --glass: rgba(12, 26, 18, 0.88);
-            --border: rgba(46, 204, 113, 0.3);
+            --neon: #00f2fe;
+            --accent: #7c4dff;
+            --bg: #020208;
+            --glass: rgba(10, 15, 30, 0.75);
+            --border: rgba(0, 242, 254, 0.25);
             --danger: #ef4444;
         }
 
@@ -29,34 +29,26 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            perspective: 1000px; /* Reduced perspective overhead */
+            perspective: 1000px; /* Strong 3D camera focal point */
             user-select: none;
         }
 
-        /* Static Nature Background (Ultra Low Render Cost) */
-        .nature-bg {
+        /* Ambient Space Background Grid */
+        .grid-bg {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            width: 200%;
+            height: 200%;
+            background-image: 
+                linear-gradient(rgba(0, 242, 254, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 242, 254, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            background-position: center;
+            transform: rotateX(60deg) translateZ(-400px);
+            opacity: 0.5;
             z-index: 1;
-            background: linear-gradient(to bottom, #060f0b, #0b2416);
         }
 
-        /* Fixed ambient light halos instead of running particle loops */
-        .ambient-fog {
-            position: absolute;
-            width: 600px;
-            height: 600px;
-            background: radial-gradient(circle, rgba(46, 204, 113, 0.08) 0%, transparent 70%);
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            pointer-events: none;
-            z-index: 2;
-        }
-
+        /* Instructions HUD Overlay */
         .hud-overlay {
             position: absolute;
             top: 2rem;
@@ -64,12 +56,32 @@
             z-index: 10;
             pointer-events: none;
         }
-        .hud-overlay h2 { font-size: 1.1rem; color: var(--neon); letter-spacing: 2px; margin-bottom: 0.3rem; }
-        .hud-overlay p { font-size: 0.75rem; color: #527360; }
+        .hud-overlay h2 { font-size: 1.2rem; color: var(--neon); letter-spacing: 2px; margin-bottom: 0.5rem; }
+        .hud-overlay p { font-size: 0.8rem; color: #64748b; }
 
-        /* Highly Optimized Viewport */
+        /* Flask Alerts HUD Overlay Node */
+        .alert-overlay {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            z-index: 100;
+            max-width: 320px;
+        }
+        .alert-node {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid var(--danger);
+            border-radius: 4px;
+            color: #f87171;
+            padding: 1rem;
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.2);
+            margin-bottom: 0.5rem;
+        }
+
+        /* The Core 3D Physics Viewport Stage */
         .viewport-3d {
-            width: 320px;
+            width: 400px;
             height: 400px;
             position: relative;
             transform-style: preserve-3d;
@@ -78,6 +90,7 @@
         }
         .viewport-3d:active { cursor: grabbing; }
 
+        /* True 3D Volumetric Cylinder Geometric Structure */
         .cylinder-pod {
             width: 100%;
             height: 100%;
@@ -86,83 +99,51 @@
             will-change: transform;
         }
 
-        /* Dual-Face Architecture (Drastically reduces composite layers) */
+        /* Individual Dimensional Structural Panels */
         .panel {
             position: absolute;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
+            width: 260px;
+            height: 380px;
+            left: 70px; /* Center within parent container */
             background: var(--glass);
             border: 2px solid var(--border);
             border-radius: 16px;
-            padding: 2.5rem 1.5rem;
+            padding: 2rem 1.5rem;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            backface-visibility: hidden; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            backface-visibility: visible; /* Allows you to view the geometry inside/out */
+            box-shadow: 0 0 30px rgba(0, 242, 254, 0.05), inset 0 0 20px rgba(0, 242, 254, 0.1);
+            transition: border-color 0.3s;
         }
 
-        /* Minimal Mechanical Rear Facing Element */
-        .panel-back-hologram {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            background: rgba(10, 24, 16, 0.95);
-            border: 2px solid rgba(46, 204, 113, 0.2);
-            border-radius: 16px;
-            backface-visibility: hidden;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
+        /* Spatial Trigonometric Matrix Transform Mapping */
+        .face-1 { transform: rotateY(0deg) translateZ(225px); }
+        .face-2 { transform: rotateY(60deg) translateZ(225px); }
+        .face-3 { transform: rotateY(120deg) translateZ(225px); }
+        .face-4 { transform: rotateY(180deg) translateZ(225px); }
+        .face-5 { transform: rotateY(240deg) translateZ(225px); }
+        .face-6 { transform: rotateY(300deg) translateZ(225px); }
 
-        /* Simplified Two-Panel Pivot Setup */
-        .face-front { transform: rotateY(0deg) translateZ(20px); }
-        .face-back { transform: rotateY(180deg) translateZ(20px); }
-
-        /* Profile Asset Image Link Hook */
-        .user-avatar-bg {
-            background: linear-gradient(rgba(12, 26, 18, 0.88), rgba(12, 26, 18, 0.88)), 
-                        url("{{ url_for('static', filename='bg-profile.jpg') }}") no-repeat center center;
-            background-size: cover;
-        }
-
-        /* Form Layout Elements */
+        /* Interface Formatting Inside the 3D Panels */
         .panel-header {
             text-align: center;
             border-bottom: 1px dashed var(--border);
             padding-bottom: 0.75rem;
-            width: 100%;
         }
-        .panel-header h3 { font-size: 0.95rem; color: var(--neon); letter-spacing: 1px; }
-        .panel-header span { font-size: 0.65rem; color: #43614f; }
-
-        .login-form-container {
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            width: 100%;
-            margin-top: 1.5rem;
-        }
+        .panel-header h3 { font-size: 1rem; color: var(--neon); letter-spacing: 1px; }
+        .panel-header span { font-size: 0.65rem; color: #475569; }
 
         .input-block {
             display: flex;
             flex-direction: column;
             gap: 0.5rem;
-            margin-bottom: 1.5rem;
         }
-        .input-block label { font-size: 0.65rem; color: var(--neon); text-transform: uppercase; letter-spacing: 1px; }
+        .input-block label { font-size: 0.7rem; color: var(--neon); text-transform: uppercase; }
         .input-block input {
             width: 100%;
             padding: 0.75rem;
-            background: rgba(0,0,0,0.7);
+            background: rgba(0,0,0,0.6);
             border: 1px solid var(--border);
             border-radius: 6px;
             color: #fff;
@@ -171,12 +152,13 @@
         }
         .input-block input:focus {
             border-color: #fff;
+            box-shadow: 0 0 15px var(--neon);
         }
 
         .action-trigger {
             width: 100%;
             background: linear-gradient(135deg, var(--neon), var(--accent));
-            color: #050f0a;
+            color: #000;
             border: none;
             padding: 0.85rem;
             border-radius: 8px;
@@ -185,154 +167,208 @@
             text-transform: uppercase;
             font-size: 0.8rem;
             letter-spacing: 1px;
+            transition: all 0.2s;
+        }
+        .action-trigger:hover {
+            transform: scale(1.03);
+            box-shadow: 0 0 20px var(--neon);
         }
 
-        .error-stream {
+        .data-stream {
             font-size: 0.7rem;
-            color: var(--danger);
-            border: 1px dashed var(--danger);
-            padding: 6px;
-            border-radius: 4px;
-            text-align: center;
-            margin-bottom: 10px;
-            background: rgba(239, 68, 68, 0.1);
+            color: #475569;
+            line-height: 1.4;
         }
 
-        /* Ultra Low Overhead Core Graphic */
-        .servo-ring-assembly {
-            position: relative;
-            width: 100px;
-            height: 100px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .outer-gear {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            border: 2px dashed var(--neon);
-            border-radius: 50%;
-            animation: spinClockwise 12s infinite linear;
-        }
-        .core-node {
-            width: 20px;
-            height: 20px;
-            background: var(--neon);
-            border-radius: 50%;
-        }
-
+        /* Telemetry HUD display */
         .telemetry-deck {
             position: absolute;
             bottom: 2rem;
             right: 2rem;
             font-family: monospace;
-            font-size: 0.7rem;
-            color: #43614f;
+            font-size: 0.75rem;
+            color: #475569;
             text-align: right;
-            line-height: 1.5;
+            line-height: 1.6;
         }
-
-        @keyframes spinClockwise { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
-    <div class="nature-bg"></div>
-    <div class="ambient-fog"></div>
+    <div class="grid-bg"></div>
 
     <div class="hud-overlay">
-        <h2>ECO_SYSTEM_v9.00</h2>
-        <p>DRAG TO ROTATE INTERFACE</p>
+        <h2>CORE_MATRIX_v6.00</h2>
+        <p>LEFT CLICK + DRAG ANYWHERE TO SPIN OBJECT 360°</p>
     </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="alert-overlay">
+          {% for category, message in messages %}
+            <div class="alert-node">
+               ⚠️ {{ message }}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
 
     <div class="viewport-3d" id="stage">
         <div class="cylinder-pod" id="pod">
             
-            <!-- FACE 1: FRONT ACCESS PORT -->
-            <div class="panel face-front user-avatar-bg">
+            <form class="panel face-1" method="POST" action="{{ url_for('login') }}">
                 <div class="panel-header">
                     <h3>SECURE_GATE_01</h3>
                     <span>PRIMARY AUTH TERMINAL</span>
                 </div>
-                
-                <form class="login-form-container" method="POST" action="{{ url_for('login') }}">
-                    <div style="flex-grow: 1; display: flex; flex-direction: column; justify-content: center;">
-                        {% with messages = get_flashed_messages(with_categories=true) %}
-                          {% if messages %}
-                            {% for category, message in messages %}
-                              <div class="error-stream">> AUTH_ERR: INVALID CIPHER TOKEN</div>
-                            {% endfor %}
-                          {% endif %}
-                        {% endwith %}
+                <div class="input-block">
+                    <label>User Index</label>
+                    <input type="text" name="username" placeholder="SYS_ADMIN" required autocomplete="off" onfocus="isolateInput()">
+                </div>
+                <div class="input-block">
+                    <label>Cipher Key</label>
+                    <input type="password" name="password" placeholder="••••••••" required onfocus="isolateInput()">
+                </div>
+                <button type="submit" class="action-trigger">Initialize Node</button>
+            </form>
 
-                        <div class="input-block">
-                            <label>Vault Access Cipher</label>
-                            <input type="password" name="password" placeholder="••••••••" required autocomplete="current-password">
-                        </div>
-                    </div>
-                    <button type="submit" class="action-trigger">Initialize Node</button>
-                </form>
+            <div class="panel face-2">
+                <div class="panel-header">
+                    <h3>DATA_LOG_02</h3>
+                    <span>LIVE SYSTEM INTEGRITY</span>
+                </div>
+                <div class="data-stream">
+                    > BOOT_SEQUENCE: OK<br>
+                    > PROXY_MATRIX: ENCRYPTED<br>
+                    > PORTAL_ROTATION: 360_ACTIVE<br>
+                    > GEOMETRY_CALCULUS: STABLE<br>
+                    > HARDWARE_ACCEL: TRUE<br>
+                    > PERIPHERAL_SYNC: READY
+                </div>
+                <div style="font-size:0.65rem; color:var(--neon); text-align:center;">NODE STATUS: STANDBY</div>
             </div>
 
-            <!-- FACE 2: REAR OPTIMIZED MECH NODE -->
-            <div class="panel-back-hologram face-back">
-                <div class="servo-ring-assembly">
-                    <div class="outer-gear"></div>
-                    <div class="core-node"></div>
+            <div class="panel face-3">
+                <div class="panel-header">
+                    <h3>SYS_DIAG_03</h3>
+                    <span>HARDWARE COMPLIANCE</span>
                 </div>
-                <div style="margin-top: 1.5rem; font-size: 0.65rem; color: var(--neon); letter-spacing: 1px;">BACKPLANE_ACTIVE</div>
+                <div style="display:flex; justify-content:center; align-items:center; height:100%; flex-direction:column; gap:1rem;">
+                    <div style="width:70px; height:70px; border:3px dashed var(--neon); border-radius:50%; animation: spinClockwise 10s linear infinite;"></div>
+                    <span style="font-size:0.7rem; color:#64748b;">COMPUTING SEGMENTS...</span>
+                </div>
+            </div>
+
+            <div class="panel face-4">
+                <div class="panel-header">
+                    <h3>OVERRIDE_04</h3>
+                    <span>REAR BACKUP ACCESS</span>
+                </div>
+                <div class="input-block">
+                    <label>Emergency Key</label>
+                    <input type="password" placeholder="MASTER_TOKEN" disabled style="opacity: 0.4; cursor: not-allowed;">
+                </div>
+                <button type="button" class="action-trigger" style="background:transparent; border:1px solid #ef4444; color:#ef4444; cursor: not-allowed; opacity: 0.5;">Force Flush</button>
+            </div>
+
+            <div class="panel face-5">
+                <div class="panel-header">
+                    <h3>NET_PROTOCOL_05</h3>
+                    <span>BANDWIDTH ROUTING MAP</span>
+                </div>
+                <div class="data-stream" style="color:var(--accent)">
+                    IP.SRC // 192.168.1.100<br>
+                    GATEWAY // 10.0.0.1<br>
+                    SUBNET // 255.255.255.0<br>
+                    DNS.MATRIX // 8.8.8.8
+                </div>
+                <div style="width:100%; height:4px; background:rgba(255,255,255,0.1); border-radius:2px; overflow:hidden;">
+                    <div style="width:75%; height:100%; background:var(--neon)"></div>
+                </div>
+            </div>
+
+            <div class="panel face-6">
+                <div class="panel-header">
+                    <h3>DB_CLUSTER_06</h3>
+                    <span>MEMPOOL REPLICATION</span>
+                </div>
+                <div style="text-align:center; font-size:2rem; font-weight:bold; color:var(--neon);">99.98%</div>
+                <div style="font-size:0.65rem; color:#64748b; text-align:center;">REDUNDANCY INTEGRATION COMPLETENESS</div>
             </div>
 
         </div>
     </div>
 
     <div class="telemetry-deck">
-        ENGINE: LIGHTWEIGHT_HYBRID<br>
-        ORIENTATION: <span id="tele-y">0.0°</span><br>
-        RENDER_LOAD: MINIMAL
+        ROTATION_VECTOR_X: <span id="tele-x">0.0°</span><br>
+        ROTATION_VECTOR_Y: <span id="tele-y">0.0°</span><br>
+        POLYGON_COUNT: 6 FACES (CLOSED CYLINDER)
     </div>
 
-    <!-- ==================== ECO-LIGHTWEIGHT HARDWARE ENGINE ==================== -->
+    <style>
+        @keyframes spinClockwise { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    </style>
+
     <script>
+        const stage = document.getElementById('stage');
         const pod = document.getElementById('pod');
+        const teleX = document.getElementById('tele-x');
         const teleY = document.getElementById('tele-y');
 
         let isInteracting = false;
-        let currentY = 0; 
+        let currentX = -15; // Set an initial display angle pitch down
+        let currentY = -25; // Set an initial display rotation offset angle
         let previousMouseX = 0;
+        let previousMouseY = 0;
+
+        let targetX = currentX;
         let targetY = currentY;
 
-        // Uses highly efficient pointer events handling touch and mouse together
-        const onPointerDown = (clientX) => {
+        // Mouse Physics Interaction Listeners
+        window.addEventListener('mousedown', (e) => {
+            // Keep interactive form inputs clean from accidental drag triggers
+            if(e.target.tagName === 'INPUT' || e.target.tagName === 'BUTTON') return;
             isInteracting = true;
-            previousMouseX = clientX;
-        };
+            previousMouseX = e.clientX;
+            previousMouseY = e.clientY;
+        });
 
-        const onPointerMove = (clientX) => {
+        window.addEventListener('mousemove', (e) => {
             if (!isInteracting) return;
-            const deltaMouseX = clientX - previousMouseX;
-            targetY += deltaMouseX * 0.6; // Higher sensitivity, lower calculation loop requirement
-            previousMouseX = clientX;
-        };
 
-        window.addEventListener('mousedown', (e) => onPointerDown(e.clientX));
-        window.addEventListener('mousemove', (e) => onPointerMove(e.clientX));
+            const deltaMouseX = e.clientX - previousMouseX;
+            const deltaMouseY = e.clientY - previousMouseY;
+
+            targetY += deltaMouseX * 0.5; // Controls horizontal rotation path around Y-axis
+            targetX -= deltaMouseY * 0.5; // Controls vertical pitch path around X-axis
+
+            previousMouseX = e.clientX;
+            previousMouseY = e.clientY;
+        });
+
         window.addEventListener('mouseup', () => { isInteracting = false; });
 
-        window.addEventListener('touchstart', (e) => onPointerDown(e.touches[0].clientX));
-        window.addEventListener('touchmove', (e) => onPointerMove(e.touches[0].clientX));
-        window.addEventListener('touchend', () => { isInteracting = false; });
+        // Hardware Renderer Calculation Loop
+        function execute3DTransformationTick() {
+            currentX += (targetX - currentX) * 0.1;
+            currentY += (targetY - currentY) * 0.1;
 
-        function runRenderLoop() {
-            if (Math.abs(targetY - currentY) > 0.05) {
-                currentY += (targetY - currentY) * 0.15; // Snappy transition interpolation
-                pod.style.transform = `rotateY(${currentY}deg)`;
-                teleY.innerText = `${((currentY % 360 + 360) % 360).toFixed(1)}°`;
-            }
-            requestAnimationFrame(runRenderLoop);
+            // Render absolute rotational coordinates onto the volumetric matrix array
+            pod.style.transform = `rotateX(${currentX}deg) rotateY(${currentY}deg)`;
+
+            // Render live technical data readouts onto HUD
+            teleX.innerText = `${((currentX % 360 + 360) % 360).toFixed(1)}°`;
+            teleY.innerText = `${((currentY % 360 + 360) % 360).toFixed(1)}°`;
+
+            requestAnimationFrame(execute3DTransformationTick);
         }
-        runRenderLoop();
+        execute3DTransformationTick();
+
+        function isolateInput() {
+            // Stops target rotation drifting while user types credentials
+            isInteracting = false;
+        }
     </script>
 </body>
 </html>
