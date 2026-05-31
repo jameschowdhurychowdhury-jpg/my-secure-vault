@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>360° Volumetric Login Node - Deep Space Core</title>
+    <title>360° Volumetric Login Node - Live Nature Core</title>
     <style>
         :root {
-            --neon: #00f2fe;
-            --accent: #7c4dff;
-            --bg: #02020a;
-            --glass: rgba(10, 15, 30, 0.82);
-            --border: rgba(0, 242, 254, 0.25);
+            --neon: #2ecc71; /* Nature Emerald Green */
+            --accent: #27ae60;
+            --bg: #060f0b;
+            --glass: rgba(12, 26, 18, 0.82);
+            --border: rgba(46, 204, 113, 0.25);
             --danger: #ef4444;
         }
 
@@ -33,15 +33,53 @@
             user-select: none;
         }
 
-        /* Deep Space Cosmos Canvas Layer */
-        #space-bg {
+        /* High-Performance Live Nature Background */
+        .nature-bg {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             z-index: 1;
+            /* Deep ambient forest atmosphere using linear gradients */
+            background: linear-gradient(to bottom, rgba(6, 15, 11, 0.8), rgba(12, 36, 22, 0.9)),
+                        radial-gradient(circle at 50% 30%, #11381e 0%, #060f0b 70%);
+            overflow: hidden;
+        }
+
+        /* Pure CSS Hardware-Accelerated Fireflies (Zero Lag) */
+        .firefly-canopy {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
             pointer-events: none;
+        }
+
+        .firefly {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: #5bf59e;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #2ecc71, 0 0 20px #2ecc71;
+            animation: floatGlow 8s infinite ease-in-out;
+            opacity: 0;
+            will-change: transform, opacity;
+        }
+
+        /* Distribute fireflies across screen with staggered delays */
+        .firefly:nth-child(1) { left: 15%; top: 20%; animation-delay: 0s; animation-duration: 10s; }
+        .firefly:nth-child(2) { left: 45%; top: 75%; animation-delay: 1.5s; animation-duration: 7s; }
+        .firefly:nth-child(3) { left: 80%; top: 15%; animation-delay: 4s; animation-duration: 9s; }
+        .firefly:nth-child(4) { left: 70%; top: 60%; animation-delay: 2s; animation-duration: 12s; }
+        .firefly:nth-child(5) { left: 25%; top: 50%; animation-delay: 5.5s; animation-duration: 8s; }
+        .firefly:nth-child(6) { left: 55%; top: 25%; animation-delay: 3s; animation-duration: 11s; }
+
+        @keyframes floatGlow {
+            0%, 100% { transform: translateY(0) translateX(0) scale(0.8); opacity: 0; }
+            50% { transform: translateY(-40px) translateX(20px) scale(1.2); opacity: 0.8; }
         }
 
         .hud-overlay {
@@ -51,8 +89,8 @@
             z-index: 10;
             pointer-events: none;
         }
-        .hud-overlay h2 { font-size: 1.2rem; color: var(--neon); letter-spacing: 2px; margin-bottom: 0.5rem; text-shadow: 0 0 10px rgba(0, 242, 254, 0.5); }
-        .hud-overlay p { font-size: 0.8rem; color: #64748b; }
+        .hud-overlay h2 { font-size: 1.2rem; color: var(--neon); letter-spacing: 2px; margin-bottom: 0.5rem; text-shadow: 0 0 10px rgba(46, 204, 113, 0.4); }
+        .hud-overlay p { font-size: 0.8rem; color: #527360; }
 
         .viewport-3d {
             width: 400px;
@@ -86,10 +124,10 @@
             flex-direction: column;
             justify-content: space-between;
             backface-visibility: hidden; 
-            box-shadow: 0 0 30px rgba(0, 242, 254, 0.05), inset 0 0 20px rgba(0, 242, 254, 0.1);
+            box-shadow: 0 0 30px rgba(46, 204, 113, 0.05), inset 0 0 20px rgba(46, 204, 113, 0.1);
             transition: border-color 0.3s, background 0.4s;
             overflow: hidden;
-            backdrop-filter: blur(4px);
+            backdrop-filter: blur(6px);
         }
 
         /* Mechanical Back Faces */
@@ -98,8 +136,8 @@
             width: 260px;
             height: 380px;
             left: 70px;
-            background: rgba(8, 10, 25, 0.92);
-            border: 1px solid rgba(0, 242, 254, 0.2);
+            background: rgba(10, 24, 16, 0.92);
+            border: 1px solid rgba(46, 204, 113, 0.2);
             border-radius: 16px;
             backface-visibility: hidden;
             display: flex;
@@ -107,7 +145,7 @@
             justify-content: space-around;
             align-items: center;
             padding: 2rem 1.5rem;
-            box-shadow: inset 0 0 25px rgba(0, 242, 254, 0.15);
+            box-shadow: inset 0 0 25px rgba(46, 204, 113, 0.15);
             overflow: hidden;
         }
 
@@ -128,7 +166,7 @@
 
         /* Background Image Hook */
         .user-avatar-bg {
-            background: linear-gradient(rgba(10, 15, 30, 0.85), rgba(10, 15, 30, 0.85)), 
+            background: linear-gradient(rgba(12, 26, 18, 0.85), rgba(12, 26, 18, 0.85)), 
                         url("{{ url_for('static', filename='bg-profile.jpg') }}") no-repeat center center;
             background-size: cover;
         }
@@ -141,7 +179,7 @@
             width: 100%;
         }
         .panel-header h3 { font-size: 1rem; color: var(--neon); letter-spacing: 1px; }
-        .panel-header span { font-size: 0.65rem; color: #475569; }
+        .panel-header span { font-size: 0.65rem; color: #43614f; }
 
         .login-form-container {
             height: 100%;
@@ -274,7 +312,7 @@
         .data-chassis-loader {
             width: 100%;
             height: 35px;
-            border: 1px solid rgba(0, 242, 254, 0.15);
+            border: 1px solid rgba(46, 204, 113, 0.15);
             background: rgba(0,0,0,0.5);
             position: relative;
             border-radius: 4px;
@@ -284,7 +322,7 @@
         .chassis-fill {
             height: 100%;
             width: 45%;
-            background: rgba(0, 242, 254, 0.15);
+            background: rgba(46, 204, 113, 0.15);
             border-right: 2px solid var(--neon);
             position: absolute;
             left: -45%;
@@ -297,7 +335,7 @@
             right: 2rem;
             font-family: monospace;
             font-size: 0.75rem;
-            color: #475569;
+            color: #43614f;
             text-align: right;
             line-height: 1.6;
         }
@@ -312,16 +350,29 @@
 </head>
 <body>
 
-    <canvas id="space-bg"></canvas>
+    <!-- High Performance Nature Backdrop Layer -->
+    <div class="nature-bg">
+        <div class="firefly-canopy">
+            <div class="firefly"></div>
+            <div class="firefly"></div>
+            <div class="firefly"></div>
+            <div class="firefly"></div>
+            <div class="firefly"></div>
+            <div class="firefly"></div>
+        </div>
+    </div>
 
     <div class="hud-overlay">
-        <h2>ORBITAL_MATRIX_v7.00</h2>
-        <p>LEFT CLICK + DRAG ANYWHERE TO ROTATE SYSTEM Node</p>
+        <h2>ECO_SYSTEM_v8.00</h2>
+        <p>LEFT CLICK + DRAG ANYWHERE TO ROTATE SYSTEM NODE</p>
     </div>
 
     <div class="viewport-3d" id="stage">
         <div class="cylinder-pod" id="pod">
             
+            <!-- ==================== FRONT OUTWARD FACES ==================== -->
+            
+            <!-- FACE 1: ACCESS POINT -->
             <div class="panel face-1 user-avatar-bg">
                 <div class="panel-header">
                     <h3>SECURE_GATE_01</h3>
@@ -347,6 +398,7 @@
                 </form>
             </div>
 
+            <!-- FACE 2: ROBOT CORE 1 -->
             <div class="panel face-2 user-avatar-bg">
                 <div class="servo-ring-assembly">
                     <div class="outer-gear"></div><div class="inner-gear"></div><div class="core-node"></div>
@@ -354,6 +406,7 @@
                 <div class="data-chassis-loader"><div class="chassis-fill"></div></div>
             </div>
 
+            <!-- FACE 3: ROBOT CORE 2 -->
             <div class="panel face-3 user-avatar-bg">
                 <div class="robotic-matrix-grid">
                     <div class="matrix-column" style="height: 30%"></div><div class="matrix-column" style="height: 75%"></div>
@@ -363,6 +416,7 @@
                 <div class="servo-ring-assembly" style="transform: scale(0.7);"><div class="outer-gear" style="animation-direction: reverse;"></div><div class="core-node" style="background:var(--accent);"></div></div>
             </div>
 
+            <!-- FACE 4: ROBOT CORE 3 -->
             <div class="panel face-4 user-avatar-bg">
                 <div class="robot-laser-scanner"></div>
                 <div class="data-chassis-loader"><div class="chassis-fill" style="animation-duration: 1.5s;"></div></div>
@@ -372,6 +426,7 @@
                 </div>
             </div>
 
+            <!-- FACE 5: ROBOT CORE 4 -->
             <div class="panel face-5 user-avatar-bg">
                 <div class="servo-ring-assembly" style="transform: scale(0.85);">
                     <div class="outer-gear"></div><div class="inner-gear" style="animation-direction: reverse;"></div><div class="core-node"></div>
@@ -381,6 +436,7 @@
                 </div>
             </div>
 
+            <!-- FACE 6: ROBOT CORE 5 -->
             <div class="panel face-6 user-avatar-bg">
                 <div class="robot-laser-scanner" style="background: var(--accent); box-shadow: 0 0 15px var(--accent);"></div>
                 <div class="robotic-matrix-grid">
@@ -391,6 +447,8 @@
             </div>
 
 
+            <!-- ==================== REVERSE ROBOTIC BACK FACES ==================== -->
+            
             <div class="panel-back-hologram back-face-1">
                 <div class="robot-laser-scanner"></div>
                 <div class="servo-ring-assembly">
@@ -416,7 +474,7 @@
                 <div class="servo-ring-assembly" style="transform: scale(0.8);">
                     <div class="outer-gear" style="animation-direction: reverse;"></div><div class="inner-gear"></div><div class="core-node" style="background: var(--accent);"></div>
                 </div>
-                <div class="data-chassis-loader"><div class="chassis-fill" style="animation-delay: 1.2s; background: rgba(124, 77, 255, 0.2); border-color: var(--accent);"></div></div>
+                <div class="data-chassis-loader"><div class="chassis-fill" style="animation-delay: 1.2s; background: rgba(46, 204, 113, 0.2); border-color: var(--accent);"></div></div>
             </div>
 
             <div class="panel-back-hologram back-face-4">
@@ -449,136 +507,12 @@
     </div>
 
     <div class="telemetry-deck">
-        COSMOS_ENTROPY: <span id="tele-space">ACTIVE</span><br>
+        ENVIRONMENT: <span style="color:var(--neon);">STABLE_NATURAL</span><br>
         ROTATION_VECTOR_Y: <span id="tele-y">0.0°</span><br>
-        POLYGON_COUNT: SOLAR NODE CORE
+        LAG_REDUCTION: OPTIMAL (0% CPU CANVAS THREAD)
     </div>
 
-    <script>
-        const canvas = document.getElementById('space-bg');
-        const ctx = canvas.getContext('2d');
-
-        let stars = [];
-        let asteroids = [];
-        let planets = [];
-        const sun = { x: 0, y: 0, radius: 35 };
-
-        function initializeSpace() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            
-            // Generate Stars
-            stars = [];
-            for(let i=0; i<150; i++) {
-                stars.push({
-                    x: Math.random() * canvas.width,
-                    y: Math.random() * canvas.height,
-                    size: Math.random() * 1.8,
-                    opacity: Math.random(),
-                    speed: 0.005 + Math.random() * 0.01
-                });
-            }
-
-            // Generate Asteroids
-            asteroids = [];
-            for(let i=0; i<12; i++) {
-                asteroids.push({
-                    x: Math.random() * canvas.width,
-                    y: Math.random() * canvas.height,
-                    radius: 2 + Math.random() * 4,
-                    dx: (Math.random() - 0.5) * 0.4,
-                    dy: (Math.random() - 0.5) * 0.4
-                });
-            }
-
-            // Define Solar System Planets (Relative offsets from center)
-            planets = [
-                { distance: 80, radius: 4, speed: 0.03, color: '#94a3b8', angle: Math.random() * Math.PI * 2 },  // Mercury
-                { distance: 120, radius: 7, speed: 0.02, color: '#e2e8f0', angle: Math.random() * Math.PI * 2 }, // Venus
-                { distance: 170, radius: 8, speed: 0.015, color: '#00f2fe', angle: Math.random() * Math.PI * 2 },// Earth
-                { distance: 220, radius: 6, speed: 0.01, color: '#f87171', angle: Math.random() * Math.PI * 2 }, // Mars
-                { distance: 290, radius: 14, speed: 0.007, color: '#fb923c', angle: Math.random() * Math.PI * 2 } // Jupiter
-            ];
-        }
-
-        function drawSpaceEngine() {
-            ctx.fillStyle = '#010105';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            const centerX = canvas.width / 2;
-            const centerY = canvas.height / 2;
-
-            // 1. Draw Twinkling Stars
-            for(let star of stars) {
-                star.opacity += star.speed;
-                if(star.opacity > 1 || star.opacity < 0) star.speed = -star.speed;
-                ctx.fillStyle = `rgba(255, 255, 255, ${Math.abs(star.opacity)})`;
-                ctx.beginPath();
-                ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
-                ctx.fill();
-            }
-
-            // 2. Draw Wandering Asteroids
-            for(let ast of asteroids) {
-                ast.x += ast.dx;
-                ast.y += ast.dy;
-                if(ast.x < 0 || ast.x > canvas.width) ast.dx = -ast.dx;
-                if(ast.y < 0 || ast.y > canvas.height) ast.dy = -ast.dy;
-                
-                ctx.fillStyle = '#475569';
-                ctx.beginPath();
-                ctx.arc(ast.x, ast.y, ast.radius, 0, Math.PI * 2);
-                ctx.fill();
-            }
-
-            // 3. Draw The Glow Sun
-            let sunGlow = ctx.createRadialGradient(centerX, centerY, 5, centerX, centerY, sun.radius * 2);
-            sunGlow.addColorStop(0, '#fffbeb');
-            sunGlow.addColorStop(0.2, '#fef08a');
-            sunGlow.addColorStop(0.5, 'rgba(245, 158, 11, 0.3)');
-            sunGlow.addColorStop(1, 'rgba(245, 158, 11, 0)');
-            ctx.fillStyle = sunGlow;
-            ctx.beginPath();
-            ctx.arc(centerX, centerY, sun.radius * 2, 0, Math.PI * 2);
-            ctx.fill();
-
-            // 4. Draw Solar System Planets & Orbit Rings
-            for(let planet of planets) {
-                planet.angle += planet.speed;
-
-                // Orbit Ring Line
-                ctx.strokeStyle = 'rgba(255, 255, 255, 0.03)';
-                ctx.lineWidth = 1;
-                ctx.beginPath();
-                ctx.arc(centerX, centerY, planet.distance, 0, Math.PI * 2);
-                ctx.stroke();
-
-                // Planet Node Position Calculation
-                const pX = centerX + Math.cos(planet.angle) * planet.distance;
-                const pY = centerY + Math.sin(planet.angle) * planet.distance;
-
-                ctx.fillStyle = planet.color;
-                ctx.beginPath();
-                ctx.arc(pX, pY, planet.radius, 0, Math.PI * 2);
-                ctx.fill();
-
-                // Optional tiny highlight bloom on planets
-                if (planet.color === '#00f2fe') {
-                    ctx.fillStyle = 'rgba(0, 242, 254, 0.4)';
-                    ctx.beginPath();
-                    ctx.arc(pX, pY, planet.radius + 3, 0, Math.PI * 2);
-                    ctx.fill();
-                }
-            }
-
-            requestAnimationFrame(drawSpaceEngine);
-        }
-
-        window.addEventListener('resize', initializeSpace);
-        initializeSpace();
-        drawSpaceEngine();
-    </script>
-
+    <!-- ==================== HIGH PERFORMANCE 3D INTERACTION ENGINE ==================== -->
     <script>
         const stage = document.getElementById('stage');
         const pod = document.getElementById('pod');
@@ -623,6 +557,7 @@
         window.addEventListener('touchend', () => { isInteracting = false; });
 
         function execute3DTransformationTick() {
+            // Smooth interpolation
             currentX += (targetX - currentX) * 0.1;
             currentY += (targetY - currentY) * 0.1;
 
