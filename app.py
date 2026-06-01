@@ -7,14 +7,11 @@ from werkzeug.utils import secure_filename
 app = Flask(__name__)
 app.secret_key = 'cyber_secure_vault_secret'
 
-# --- BACKBLAZE B2 / S3 CREDENTIAL CONFIGURATION ---
-# These pull securely from Render's Environment Variables in production
 B2_ENDPOINT_URL = os.environ.get('B2_ENDPOINT_URL', 'https://s3.us-east-005.backblazeb2.com')
 B2_KEY_ID = os.environ.get('B2_KEY_ID', 'YOUR_B2_KEY_ID')
 B2_APPLICATION_KEY = os.environ.get('B2_APPLICATION_KEY', 'YOUR_B2_APPLICATION_KEY')
 B2_BUCKET_NAME = os.environ.get('B2_BUCKET_NAME', 'YOUR_BUCKET_NAME')
 
-# Initialize B2 Resource Client via S3-Compatible Layer
 s3_client = boto3.client(
     's3',
     endpoint_url=B2_ENDPOINT_URL,
@@ -23,7 +20,6 @@ s3_client = boto3.client(
     config=Config(signature_version='s3v4')
 )
 
-# Dictionary mapping file types to matrix subfolders
 EXTENSIONS_MAP = {
     'pictures': ['png', 'jpg', 'jpeg', 'gif'],
     'pdfs': ['pdf'],
@@ -39,7 +35,6 @@ def get_category(filename):
     return 'others'
 
 def get_vault_data():
-    """Scans the Backblaze B2 Bucket architecture to retrieve live matrix assets"""
     data = {cat: [] for cat in EXTENSIONS_MAP.keys()}
     data['others'] = []
     
@@ -48,13 +43,19 @@ def get_vault_data():
         if 'Contents' in response:
             for obj in response['Contents']:
                 key = obj['Key']
-                # Keys are structured as "category/filename" in the cloud bucket
-                if '/' in key:
-                    category, filename = key.split('/', 1)
-                    if category in data and filename:
-                        data[category].append(filename)
+                if key.endswith('/'):  # Skip empty folder objects
+                    continue
+                
+                # Automatically extract filename regardless of folder depth
+                filename = key.split('/')[-1]
+                category = get_category(filename)
+                
+                file_info = {'filename': filename, 'key': key}
+                if category in data:
+                    data[category].append(file_info)
+                else:
+                    data['others'].append(file_info)
     except Exception as e:
-        # 🚨 DIAGNOSTIC TOOL: This flashes the exact B2 error onto your screen!
         print(f"B2 Connection Error: {str(e)}")
         from flask import flash
         flash(f"System Diagnostic Error (B2 Scan): {str(e)}", "error")
@@ -78,47 +79,42 @@ def index():
         if file:
             filename = secure_filename(file.filename)
             category = get_category(filename)
+            # Store cleanly with a category prefix
             b2_key = f"{category}/{filename}"
             
             try:
-                # Upload directly to Backblaze cloud buffer memory
-                s3_client.upload_fileobj(
-                    file, 
-                    B2_BUCKET_NAME, 
-                    b2_key,
-                    ExtraArgs={'ContentType': file.content_type}
-                )
+                s3_client.upload_fileobj(file, B2_BUCKET_NAME, b2_key, ExtraArgs={'ContentType': file.content_type})
                 flash(f'File successfully locked into B2 Cloud Category "{category.capitalize()}"!', 'success')
             except Exception as e:
                 flash(f'Matrix upload interrupted: {str(e)}', 'error')
                 
             return redirect(url_for('index'))
 
-    vault_data = get_vault_data()
-    return render_template('dashboard.html', vault_data=vault_data)
+    return render_template('dashboard.html', vault_data=get_vault_data())
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
-        
         if username == 'SYS_ADMIN' and password == 'password':
             session['logged_in'] = True
             return redirect(url_for('index'))
         else:
             flash('ACCESS DENIED: Invalid Matrix Cipher Key credentials.', 'error')
-            
     return render_template('login.html')
 
-@app.route('/download/<category>/<filename>')
-def download_file(category, filename):
+@app.route('/download')
+def download_file():
     if not session.get('logged_in'):
         return redirect(url_for('login'))
     
-    b2_key = f"{category}/{filename}"
+    b2_key = request.args.get('key')
+    if not b2_key:
+        return redirect(url_for('index'))
+        
+    filename = b2_key.split('/')[-1]
     try:
-        # Fetch file data safely from Backblaze B2 cluster storage
         file_obj = s3_client.get_object(Bucket=B2_BUCKET_NAME, Key=b2_key)
         return Response(
             file_obj['Body'].read(),
@@ -129,12 +125,15 @@ def download_file(category, filename):
         flash(f'Unable to stream file node: {str(e)}', 'error')
         return redirect(url_for('index'))
 
-@app.route('/delete/<category>/<filename>', methods=['POST'])
-def delete_file(category, filename):
+@app.route('/delete', methods=['POST'])
+def delete_file():
     if not session.get('logged_in'):
         return redirect(url_for('login'))
     
-    b2_key = f"{category}/{filename}"
+    b2_key = request.form.get('key')
+    if not b2_key:
+        return redirect(url_for('index'))
+        
     try:
         s3_client.delete_object(Bucket=B2_BUCKET_NAME, Key=b2_key)
         flash('File removed successfully from core Backblaze matrix cluster.', 'success')
@@ -150,7 +149,5 @@ def logout():
     return redirect(url_for('login'))
 
 if __name__ == '__main__':
-    # Binds to the dynamic port variable assigned by cloud environments (defaults to 5000 locally)
     port = int(os.environ.get('PORT', 5000))
-    # Configures host interface to 0.0.0.0 to accept external requests on production networks
     app.run(host='0.0.0.0', port=port, debug=False)

@@ -11,9 +11,10 @@
         .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 2rem; }
         .upload-panel { width: 100%; max-width: 500px; margin-bottom: 3rem; left: 0; position: relative; height: auto; }
         .file-item { display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.5); padding: 0.5rem 1rem; border: 1px solid var(--border); margin-bottom: 0.5rem; border-radius: 4px; }
-        .file-item a { color: var(--neon); text-decoration: none; font-size: 0.8rem; }
-        .btn-delete { background: var(--danger); color: white; border: none; padding: 0.2rem 0.5rem; border-radius: 4px; cursor: pointer; font-size: 0.7rem; }
-        .logout-btn { position: absolute; top: 2rem; right: 2rem; background: transparent; border: 1px solid var(--neon); color: var(--neon); padding: 0.5rem 1rem; cursor: pointer; text-decoration: none; z-index: 100; }
+        .file-item a { color: var(--neon); text-decoration: none; font-size: 0.8rem; word-break: break-all; margin-right: 1rem; }
+        .btn-delete { background: var(--danger); color: white; border: none; padding: 0.2rem 0.5rem; border-radius: 4px; cursor: pointer; font-size: 0.7rem; min-width: 25px; }
+        .logout-btn { position: absolute; top: 2rem; right: 2rem; background: transparent; border: 1px solid var(--neon); color: var(--neon); padding: 0.5rem 1rem; cursor: pointer; text-decoration: none; z-index: 100; font-weight: bold; }
+        .logout-btn:hover { background: rgba(0, 242, 254, 0.1); }
     </style>
 </head>
 <body>
@@ -40,7 +41,7 @@
             </div>
             <form method="POST" enctype="multipart/form-data" action="{{ url_for('index') }}">
                 <div class="input-block">
-                    <input type="file" name="file" required style="background: transparent; border: none;">
+                    <input type="file" name="file" required style="background: transparent; border: none; padding-left: 0;">
                 </div>
                 <button type="submit" class="action-trigger">UPLOAD TO CLUSTER</button>
             </form>
@@ -57,14 +58,16 @@
                     {% if files %}
                         {% for file in files %}
                         <div class="file-item">
-                            <a href="{{ url_for('download_file', category=category, filename=file) }}">{{ file }}</a>
-                            <form action="{{ url_for('delete_file', category=category, filename=file) }}" method="POST" style="display:inline;">
+                            <a href="{{ url_for('download_file', key=file.key) }}">{{ file.filename }}</a>
+                            
+                            <form action="{{ url_for('delete_file') }}" method="POST" style="display:inline;">
+                                <input type="hidden" name="key" value="{{ file.key }}">
                                 <button type="submit" class="btn-delete">X</button>
                             </form>
                         </div>
                         {% endfor %}
                     {% else %}
-                        <p style="color: #475569; font-size: 0.8rem; text-align: center;">NO DATA FOUND</p>
+                        <p style="color: #475569; font-size: 0.8rem; text-align: center; margin-top: 2rem;">NO DATA FOUND</p>
                     {% endif %}
                 </div>
             </div>
