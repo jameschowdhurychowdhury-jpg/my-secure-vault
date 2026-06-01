@@ -8,7 +8,6 @@
     <style>
         body { display: block; overflow: auto; padding: 3rem; }
         
-        /* Zoom Controller Canvas Target */
         .dashboard-container { 
             max-width: 1200px; 
             margin: 0 auto; 
@@ -16,7 +15,7 @@
             z-index: 5; 
             transform-origin: top center;
             transition: zoom 0.15s ease-out;
-            zoom: 1.0; /* Initial baseline scalar */
+            zoom: 1.0; 
         }
         
         .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; margin-top: 2rem; }
@@ -34,7 +33,6 @@
         .btn-delete { background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid #ef4444; padding: 0.25rem 0.5rem; }
         .btn-delete:hover { background: #ef4444; color: #fff; }
         
-        /* PERSISTENT CONTROLS: Placed directly in top-right corner, exempt from scaling metrics */
         .control-panel-right {
             position: absolute;
             top: 2rem;
@@ -91,10 +89,19 @@
         }
         .logout-btn:hover { background: rgba(0, 242, 254, 0.1); }
 
-        /* Mobile adaptation for headers */
+        /* Adjusted position slightly so it clears the action controls panel */
+        .alert-overlay {
+            position: absolute;
+            top: 6rem;
+            right: 2rem;
+            z-index: 99;
+            max-width: 320px;
+        }
+
         @media (max-width: 768px) {
             body { padding: 1.5rem; padding-top: 6rem; }
-            .control-panel-right { top: 1rem; right: 1rem; width: dashed; }
+            .control-panel-right { top: 1rem; right: 1rem; }
+            .alert-overlay { top: 5rem; right: 1rem; left: 1rem; max-width: none; }
         }
     </style>
 </head>
@@ -157,7 +164,6 @@
                                 </form>
                             </div>
                         </div>
-                        ```html
                         {% endfor %}
                     {% else %}
                         <p style="color: #475569; font-size: 0.8rem; text-align: center; margin-top: 2rem;">NO DATA FOUND</p>
@@ -173,7 +179,6 @@
         const container = document.getElementById('matrixContainer');
 
         function modifyMatrixScale(delta) {
-            // Clamps scalar safely between 0.6 (60%) and 1.8 (180%) bounds
             currentZoomFactor = Math.max(0.6, Math.min(1.8, currentZoomFactor + delta));
             container.style.zoom = currentZoomFactor;
         }
