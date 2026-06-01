@@ -2,15 +2,26 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CORE_MATRIX_V6.00 // VAULT</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/cinematic.css') }}">
     <style>
         body { display: block; overflow: auto; padding: 3rem; }
-        .dashboard-container { max-width: 1200px; margin: 0 auto; position: relative; z-index: 5; }
+        
+        /* Zoom Controller Canvas Target */
+        .dashboard-container { 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            position: relative; 
+            z-index: 5; 
+            transform-origin: top center;
+            transition: zoom 0.15s ease-out;
+            zoom: 1.0; /* Initial baseline scalar */
+        }
+        
         .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; margin-top: 2rem; }
         .upload-panel { width: 100%; max-width: 500px; margin-bottom: 3rem; left: 0; position: relative; height: auto; }
         
-        /* Updated Row & Interactive Button Architecture */
         .file-item { display: flex; flex-direction: column; background: rgba(0,0,0,0.6); padding: 0.75rem 1rem; border: 1px solid var(--border); margin-bottom: 0.75rem; border-radius: 4px; gap: 0.5rem; }
         .file-name { color: #f1f5f9; font-size: 0.85rem; font-weight: 500; word-break: break-all; }
         .action-button-group { display: flex; align-items: center; gap: 0.4rem; width: 100%; justify-content: flex-end; }
@@ -23,13 +34,80 @@
         .btn-delete { background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid #ef4444; padding: 0.25rem 0.5rem; }
         .btn-delete:hover { background: #ef4444; color: #fff; }
         
-        .logout-btn { position: absolute; top: 2rem; right: 2rem; background: transparent; border: 1px solid var(--neon); color: var(--neon); padding: 0.5rem 1rem; cursor: pointer; text-decoration: none; z-index: 100; font-weight: bold; }
+        /* PERSISTENT CONTROLS: Placed directly in top-right corner, exempt from scaling metrics */
+        .control-panel-right {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            z-index: 100;
+        }
+
+        .zoom-cluster {
+            display: flex;
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 2px;
+        }
+
+        .zoom-btn {
+            background: transparent;
+            border: none;
+            color: var(--neon);
+            width: 32px;
+            height: 32px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        .zoom-btn:hover {
+            background: rgba(0, 242, 254, 0.15);
+            text-shadow: 0 0 8px var(--neon);
+        }
+        .zoom-btn:first-child {
+            border-right: 1px solid var(--border);
+        }
+
+        .logout-btn { 
+            background: transparent; 
+            border: 1px solid var(--neon); 
+            color: var(--neon); 
+            padding: 0.5rem 1rem; 
+            cursor: pointer; 
+            text-decoration: none; 
+            font-weight: bold;
+            font-size: 0.85rem;
+            border-radius: 4px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+        }
         .logout-btn:hover { background: rgba(0, 242, 254, 0.1); }
+
+        /* Mobile adaptation for headers */
+        @media (max-width: 768px) {
+            body { padding: 1.5rem; padding-top: 6rem; }
+            .control-panel-right { top: 1rem; right: 1rem; width: dashed; }
+        }
     </style>
 </head>
 <body>
     <div class="grid-bg"></div>
-    <a href="{{ url_for('logout') }}" class="logout-btn">DISCONNECT</a>
+
+    <div class="control-panel-right">
+        <div class="zoom-cluster">
+            <button class="zoom-btn" onclick="modifyMatrixScale(0.1)" title="Zoom In">+</button>
+            <button class="zoom-btn" onclick="modifyMatrixScale(-0.1)" title="Zoom Out">-</button>
+        </div>
+        <a href="{{ url_for('logout') }}" class="logout-btn">DISCONNECT</a>
+    </div>
 
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
@@ -41,7 +119,7 @@
         {% endif %}
     {% endwith %}
 
-    <div class="dashboard-container">
+    <div class="dashboard-container" id="matrixContainer">
         <h2>VAULT MATRIX NODE SECURED</h2>
         <p style="color: #64748b; margin-bottom: 2rem;">B2 Cloud Sync Active.</p>
 
@@ -72,15 +150,14 @@
                             
                             <div class="action-button-group">
                                 <a href="{{ url_for('view_file', key=file.key) }}" target="_blank" class="btn-action btn-view">View</a>
-                                
                                 <a href="{{ url_for('download_file', key=file.key) }}" class="btn-action btn-download">Download</a>
-                                
                                 <form action="{{ url_for('delete_file') }}" method="POST" style="display:inline;">
                                     <input type="hidden" name="key" value="{{ file.key }}">
                                     <button type="submit" class="btn-action btn-delete">X</button>
                                 </form>
                             </div>
                         </div>
+                        ```html
                         {% endfor %}
                     {% else %}
                         <p style="color: #475569; font-size: 0.8rem; text-align: center; margin-top: 2rem;">NO DATA FOUND</p>
@@ -90,5 +167,16 @@
             {% endfor %}
         </div>
     </div>
+
+    <script>
+        let currentZoomFactor = 1.0;
+        const container = document.getElementById('matrixContainer');
+
+        function modifyMatrixScale(delta) {
+            // Clamps scalar safely between 0.6 (60%) and 1.8 (180%) bounds
+            currentZoomFactor = Math.max(0.6, Math.min(1.8, currentZoomFactor + delta));
+            container.style.zoom = currentZoomFactor;
+        }
+    </script>
 </body>
 </html>
