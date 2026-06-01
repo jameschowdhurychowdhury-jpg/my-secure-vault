@@ -109,4 +109,7 @@ def logout():
     return redirect(url_for('login'))
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    # Binds to the dynamic port variable assigned by cloud environments (defaults to 5000 locally)
+    port = int(os.environ.get('PORT', 5000))
+    # Configures host interface to 0.0.0.0 to accept external requests on production networks
+    app.run(host='0.0.0.0', port=port, debug=False)
