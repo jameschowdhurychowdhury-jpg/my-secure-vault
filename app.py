@@ -43,10 +43,9 @@ def get_vault_data():
         if 'Contents' in response:
             for obj in response['Contents']:
                 key = obj['Key']
-                if key.endswith('/'):  # Skip empty folder objects
+                if key.endswith('/'):  
                     continue
                 
-                # Automatically extract filename regardless of folder depth
                 filename = key.split('/')[-1]
                 category = get_category(filename)
                 
@@ -79,7 +78,6 @@ def index():
         if file:
             filename = secure_filename(file.filename)
             category = get_category(filename)
-            # Store cleanly with a category prefix
             b2_key = f"{category}/{filename}"
             
             try:
@@ -123,6 +121,27 @@ def download_file():
         )
     except Exception as e:
         flash(f'Unable to stream file node: {str(e)}', 'error')
+        return redirect(url_for('index'))
+
+@app.route('/view')
+def view_file():
+    if not session.get('logged_in'):
+        return redirect(url_for('login'))
+    
+    b2_key = request.args.get('key')
+    if not b2_key:
+        return redirect(url_for('index'))
+        
+    try:
+        file_obj = s3_client.get_object(Bucket=B2_BUCKET_NAME, Key=b2_key)
+        # Use inline rather than attachment to load within native browser architecture
+        return Response(
+            file_obj['Body'].read(),
+            headers={"Content-Disposition": "inline",
+                     "Content-Type": file_obj.get('ContentType', 'application/octet-stream')}
+        )
+    except Exception as e:
+        flash(f'Unable to render view channel: {str(e)}', 'error')
         return redirect(url_for('index'))
 
 @app.route('/delete', methods=['POST'])

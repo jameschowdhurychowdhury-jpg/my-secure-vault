@@ -5,14 +5,24 @@
     <title>CORE_MATRIX_V6.00 // VAULT</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/cinematic.css') }}">
     <style>
-        /* Override 3D rules specifically for the dashboard layout */
         body { display: block; overflow: auto; padding: 3rem; }
         .dashboard-container { max-width: 1200px; margin: 0 auto; position: relative; z-index: 5; }
-        .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 2rem; }
+        .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; margin-top: 2rem; }
         .upload-panel { width: 100%; max-width: 500px; margin-bottom: 3rem; left: 0; position: relative; height: auto; }
-        .file-item { display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.5); padding: 0.5rem 1rem; border: 1px solid var(--border); margin-bottom: 0.5rem; border-radius: 4px; }
-        .file-item a { color: var(--neon); text-decoration: none; font-size: 0.8rem; word-break: break-all; margin-right: 1rem; }
-        .btn-delete { background: var(--danger); color: white; border: none; padding: 0.2rem 0.5rem; border-radius: 4px; cursor: pointer; font-size: 0.7rem; min-width: 25px; }
+        
+        /* Updated Row & Interactive Button Architecture */
+        .file-item { display: flex; flex-direction: column; background: rgba(0,0,0,0.6); padding: 0.75rem 1rem; border: 1px solid var(--border); margin-bottom: 0.75rem; border-radius: 4px; gap: 0.5rem; }
+        .file-name { color: #f1f5f9; font-size: 0.85rem; font-weight: 500; word-break: break-all; }
+        .action-button-group { display: flex; align-items: center; gap: 0.4rem; width: 100%; justify-content: flex-end; }
+        
+        .btn-action { text-decoration: none; font-size: 0.7rem; font-weight: bold; padding: 0.25rem 0.6rem; border-radius: 3px; cursor: pointer; text-transform: uppercase; transition: background 0.2s ease; border: none; }
+        .btn-view { background: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid #10b981; }
+        .btn-view:hover { background: #10b981; color: #000; }
+        .btn-download { background: rgba(0, 242, 254, 0.2); color: var(--neon); border: 1px solid var(--neon); }
+        .btn-download:hover { background: var(--neon); color: #000; }
+        .btn-delete { background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid #ef4444; padding: 0.25rem 0.5rem; }
+        .btn-delete:hover { background: #ef4444; color: #fff; }
+        
         .logout-btn { position: absolute; top: 2rem; right: 2rem; background: transparent; border: 1px solid var(--neon); color: var(--neon); padding: 0.5rem 1rem; cursor: pointer; text-decoration: none; z-index: 100; font-weight: bold; }
         .logout-btn:hover { background: rgba(0, 242, 254, 0.1); }
     </style>
@@ -58,12 +68,18 @@
                     {% if files %}
                         {% for file in files %}
                         <div class="file-item">
-                            <a href="{{ url_for('download_file', key=file.key) }}">{{ file.filename }}</a>
+                            <span class="file-name">{{ file.filename }}</span>
                             
-                            <form action="{{ url_for('delete_file') }}" method="POST" style="display:inline;">
-                                <input type="hidden" name="key" value="{{ file.key }}">
-                                <button type="submit" class="btn-delete">X</button>
-                            </form>
+                            <div class="action-button-group">
+                                <a href="{{ url_for('view_file', key=file.key) }}" target="_blank" class="btn-action btn-view">View</a>
+                                
+                                <a href="{{ url_for('download_file', key=file.key) }}" class="btn-action btn-download">Download</a>
+                                
+                                <form action="{{ url_for('delete_file') }}" method="POST" style="display:inline;">
+                                    <input type="hidden" name="key" value="{{ file.key }}">
+                                    <button type="submit" class="btn-action btn-delete">X</button>
+                                </form>
+                            </div>
                         </div>
                         {% endfor %}
                     {% else %}
