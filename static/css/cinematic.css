@@ -7,8 +7,27 @@
     --danger: #ef4444;
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Courier New', Courier, monospace; }
-body { background-color: var(--bg); color: #ffffff; height: 100vh; overflow: hidden; display: flex; align-items: center; justify-content: center; perspective: 1000px; user-select: none; }
+* { 
+    margin: 0; 
+    padding: 0; 
+    box-sizing: border-box; 
+    font-family: 'Courier New', Courier, monospace; 
+}
+
+body { 
+    background-color: var(--bg); 
+    color: #ffffff; 
+    height: 100vh; 
+    overflow: hidden; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    perspective: 1000px; 
+    user-select: none; 
+    -webkit-user-select: none;
+    touch-action: none; /* Hard-blocks multi-touch double tap zoom on mobile browsers */
+}
+
 .grid-bg { position: absolute; width: 200%; height: 200%; background-image: linear-gradient(rgba(0, 242, 254, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 242, 254, 0.03) 1px, transparent 1px); background-size: 50px 50px; background-position: center; transform: rotateX(60deg) translateZ(-400px); opacity: 0.5; z-index: 1; }
 .hud-overlay { position: absolute; top: 2rem; left: 2rem; z-index: 10; pointer-events: none; }
 .hud-overlay h2 { font-size: 1.2rem; color: var(--neon); letter-spacing: 2px; margin-bottom: 0.5rem; }
@@ -16,9 +35,21 @@ body { background-color: var(--bg); color: #ffffff; height: 100vh; overflow: hid
 .alert-overlay { position: absolute; top: 2rem; right: 2rem; z-index: 100; max-width: 320px; }
 .alert-node { background: rgba(239, 68, 68, 0.15); border: 1px solid var(--danger); border-radius: 4px; color: #f87171; padding: 1rem; font-size: 0.75rem; letter-spacing: 1px; box-shadow: 0 0 15px rgba(239, 68, 68, 0.2); margin-bottom: 0.5rem; }
 .alert-node.success { background: rgba(0, 242, 254, 0.15); border-color: var(--neon); color: var(--neon); box-shadow: 0 0 15px rgba(0, 242, 254, 0.2); }
-.viewport-3d { width: 400px; height: 400px; position: relative; transform-style: preserve-3d; z-index: 5; cursor: grab; }
+
+/* The 3D Matrix Viewport Box */
+.viewport-3d { 
+    width: 400px; 
+    height: 400px; 
+    position: relative; 
+    transform-style: preserve-3d; 
+    z-index: 5; 
+    cursor: grab; 
+    touch-action: none; /* Instructs mobile screen to yield control to JS vector engine */
+}
 .viewport-3d:active { cursor: grabbing; }
 .cylinder-pod { width: 100%; height: 100%; position: absolute; transform-style: preserve-3d; will-change: transform; }
+
+/* Desktop Volumetric Face Geometry Dimensions */
 .panel { position: absolute; width: 260px; height: 380px; left: 70px; background: var(--glass); border: 2px solid var(--border); border-radius: 16px; padding: 2rem 1.5rem; display: flex; flex-direction: column; justify-content: space-between; backface-visibility: visible; box-shadow: 0 0 30px rgba(0, 242, 254, 0.05), inset 0 0 20px rgba(0, 242, 254, 0.1); }
 .face-1 { transform: rotateY(0deg) translateZ(225px); }
 .face-2 { transform: rotateY(60deg) translateZ(225px); }
@@ -26,14 +57,66 @@ body { background-color: var(--bg); color: #ffffff; height: 100vh; overflow: hid
 .face-4 { transform: rotateY(180deg) translateZ(225px); }
 .face-5 { transform: rotateY(240deg) translateZ(225px); }
 .face-6 { transform: rotateY(300deg) translateZ(225px); }
+
 .panel-header { text-align: center; border-bottom: 1px dashed var(--border); padding-bottom: 0.75rem; }
 .panel-header h3 { font-size: 1rem; color: var(--neon); letter-spacing: 1px; }
 .panel-header span { font-size: 0.65rem; color: #475569; }
 .input-block { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1rem; }
 .input-block label { font-size: 0.7rem; color: var(--neon); text-transform: uppercase; }
-.input-block input { width: 100%; padding: 0.75rem; background: rgba(0,0,0,0.6); border: 1px solid var(--border); border-radius: 6px; color: #fff; font-size: 0.85rem; outline: none; }
+.input-block input { width: 100%; padding: 0.75rem; background: rgba(0,0,0,0.6); border: 1px solid var(--border); border-radius: 6px; color: #fff; font-size: 0.85rem; outline: none; -webkit-appearance: none; }
 .input-block input:focus { border-color: #fff; box-shadow: 0 0 15px var(--neon); }
-.action-trigger { width: 100%; background: linear-gradient(135deg, var(--neon), var(--accent)); color: #000; border: none; padding: 0.85rem; border-radius: 8px; font-weight: 900; cursor: pointer; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px; transition: all 0.2s; }
+.action-trigger { width: 100%; background: linear-gradient(135deg, var(--neon), var(--accent)); color: #000; border: none; padding: 0.85rem; border-radius: 8px; font-weight: 900; cursor: pointer; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px; transition: all 0.2s; -webkit-appearance: none; }
 .action-trigger:hover { transform: scale(1.03); box-shadow: 0 0 20px var(--neon); }
 .data-stream { font-size: 0.7rem; color: #475569; line-height: 1.4; }
 .telemetry-deck { position: absolute; bottom: 2rem; right: 2rem; font-family: monospace; font-size: 0.75rem; color: #475569; text-align: right; line-height: 1.6; z-index: 10;}
+
+/* ----------------------------------------------------
+   📱 AUTOMATED RESPONSIVE PHONE OVERRIDES (MAX-WIDTH 480px)
+   ---------------------------------------------------- */
+@media (max-width: 480px) {
+    body {
+        align-items: flex-end; /* Pushes the 3D object up slightly to clear room for soft keyboard */
+        padding-bottom: 20px;
+    }
+    .hud-overlay {
+        top: 1rem;
+        left: 1rem;
+        width: calc(100% - 2rem);
+    }
+    .hud-overlay h2 { font-size: 1rem; }
+    .hud-overlay p, .data-stream { display: none; } /* Hides heavy debug text on small phone viewports */
+    
+    .alert-overlay {
+        top: auto;
+        bottom: 1rem;
+        left: 1rem;
+        right: 1rem;
+        max-width: none;
+    }
+
+    /* Scales the viewport bounding square down for mobile panels */
+    .viewport-3d { 
+        width: 280px; 
+        height: 280px; 
+    }
+
+    /* Recalculates 3D structural cylinder geometry vectors for mobile constraints */
+    .panel { 
+        width: 210px; 
+        height: 310px; 
+        left: 35px; 
+        padding: 1.25rem 1rem; 
+        border-radius: 12px;
+    }
+    .face-1 { transform: rotateY(0deg) translateZ(182px); }
+    .face-2 { transform: rotateY(60deg) translateZ(182px); }
+    .face-3 { transform: rotateY(120deg) translateZ(182px); }
+    .face-4 { transform: rotateY(180deg) translateZ(182px); }
+    .face-5 { transform: rotateY(240deg) translateZ(182px); }
+    .face-6 { transform: rotateY(300deg) translateZ(182px); }
+    
+    .panel-header h3 { font-size: 0.85rem; }
+    .input-block input { padding: 0.55rem; font-size: 0.8rem; }
+    .action-trigger { padding: 0.7rem; font-size: 0.75rem; }
+    .telemetry-deck { display: none; } /* Hides angle tracking readouts to preserve room */
+}
