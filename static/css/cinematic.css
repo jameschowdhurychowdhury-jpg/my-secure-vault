@@ -14,25 +14,31 @@
     font-family: 'Courier New', Courier, monospace; 
 }
 
-/* Master Engine: Enforces flawless vertical & horizontal centering across all screen dimensions (PC, TV, Mobile) */
+/* FIXED: Changed touch-action to auto so the phone screen registers native clicks, taps, and scrolls normally */
 body { 
     background-color: var(--bg); 
     color: #ffffff; 
     min-height: 100vh; 
     height: 100vh;
-    overflow: hidden; 
+    overflow: auto; 
     display: flex; 
     align-items: center; 
     justify-content: center; 
     perspective: 1000px; 
-    user-select: none; 
-    -webkit-user-select: none;
-    touch-action: none;
+    user-select: text; 
+    -webkit-user-select: text;
+    touch-action: auto !important;
 }
 
-.grid-bg { position: absolute; width: 200%; height: 200%; background-image: linear-gradient(rgba(0, 242, 254, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 242, 254, 0.03) 1px, transparent 1px); background-size: 50px 50px; background-position: center; transform: rotateX(60deg) translateZ(-400px); opacity: 0.5; z-index: 1; }
+/* CRITICAL MOBILE INTERACTION FIX: Forces all clickable assets to accept instant mobile taps without interference */
+input, button, a, .btn-action, .action-trigger, .zoom-btn {
+    touch-action: manipulation !important;
+    pointer-events: auto !important;
+    cursor: pointer;
+}
 
-/* Fixed HUD elements to prevent overlapping on complex device matrix ratios */
+.grid-bg { position: absolute; width: 200%; height: 200%; background-image: linear-gradient(rgba(0, 242, 254, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 242, 254, 0.03) 1px, transparent 1px); background-size: 50px 50px; background-position: center; transform: rotateX(60deg) translateZ(-400px); opacity: 0.5; z-index: 1; pointer-events: none; }
+
 .hud-overlay { position: absolute; top: 2rem; left: 2rem; z-index: 10; pointer-events: none; }
 .hud-overlay h2 { font-size: 1.2rem; color: var(--neon); letter-spacing: 2px; margin-bottom: 0.5rem; }
 .hud-overlay p { font-size: 0.8rem; color: #64748b; }
@@ -40,20 +46,18 @@ body {
 .alert-node { background: rgba(239, 68, 68, 0.15); border: 1px solid var(--danger); border-radius: 4px; color: #f87171; padding: 1rem; font-size: 0.75rem; letter-spacing: 1px; box-shadow: 0 0 15px rgba(239, 68, 68, 0.2); margin-bottom: 0.5rem; }
 .alert-node.success { background: rgba(0, 242, 254, 0.15); border-color: var(--neon); color: var(--neon); box-shadow: 0 0 15px rgba(0, 242, 254, 0.2); }
 
-/* The 3D Viewport Anchor */
+/* Only the 3D swipe viewport handles custom drag tracking */
 .viewport-3d { 
     width: 400px; 
     height: 400px; 
     position: relative; 
     transform-style: preserve-3d; 
     z-index: 5; 
-    cursor: grab; 
-    touch-action: none;
+    touch-action: none; /* Keeps webpage from bouncing ONLY when dragging the 3D space */
 }
-.viewport-3d:active { cursor: grabbing; }
 .cylinder-pod { width: 100%; height: 100%; position: absolute; transform-style: preserve-3d; will-change: transform; }
 
-/* Volumetric Face Panel Sizing (PC / TV Standard) */
+/* Volumetric Face Panel Configuration */
 .panel { position: absolute; width: 260px; height: 380px; left: 70px; background: var(--glass); border: 2px solid var(--border); border-radius: 16px; padding: 2rem 1.5rem; display: flex; flex-direction: column; justify-content: space-between; backface-visibility: visible; box-shadow: 0 0 30px rgba(0, 242, 254, 0.05), inset 0 0 20px rgba(0, 242, 254, 0.1); }
 .face-1 { transform: rotateY(0deg) translateZ(225px); }
 .face-2 { transform: rotateY(60deg) translateZ(225px); }
@@ -69,7 +73,7 @@ body {
 .input-block label { font-size: 0.7rem; color: var(--neon); text-transform: uppercase; }
 .input-block input { width: 100%; padding: 0.75rem; background: rgba(0,0,0,0.6); border: 1px solid var(--border); border-radius: 6px; color: #fff; font-size: 0.85rem; outline: none; -webkit-appearance: none; }
 .input-block input:focus { border-color: #fff; box-shadow: 0 0 15px var(--neon); }
-.action-trigger { width: 100%; background: linear-gradient(135deg, var(--neon), var(--accent)); color: #000; border: none; padding: 0.85rem; border-radius: 8px; font-weight: 900; cursor: pointer; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px; transition: all 0.2s; -webkit-appearance: none; }
+.action-trigger { width: 100%; background: linear-gradient(135deg, var(--neon), var(--accent)); color: #000; border: none; padding: 0.85rem; border-radius: 8px; font-weight: 900; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px; transition: all 0.2s; -webkit-appearance: none; }
 .action-trigger:hover { transform: scale(1.03); box-shadow: 0 0 20px var(--neon); }
 .data-stream { font-size: 0.7rem; color: #475569; line-height: 1.4; }
 .telemetry-deck { position: absolute; bottom: 2rem; right: 2rem; font-family: monospace; font-size: 0.75rem; color: #475569; text-align: right; line-height: 1.6; z-index: 10;}
@@ -79,7 +83,7 @@ body {
    ---------------------------------------------------- */
 @media (max-width: 480px) {
     body {
-        align-items: center; /* FIXED: Keeps object perfectly vertically centered on phone screens */
+        align-items: center; 
         justify-content: center;
         padding: 0;
     }
@@ -100,13 +104,11 @@ body {
         max-width: none;
     }
 
-    /* Scaled bounding layout box so cylinder coordinates map perfectly on mobile viewports */
     .viewport-3d { 
         width: 260px; 
         height: 260px; 
     }
 
-    /* Squeezes panels uniformly so they look sleek on smaller mobile touchscreens */
     .panel { 
         width: 200px; 
         height: 300px; 
