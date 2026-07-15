@@ -111,8 +111,10 @@ def index():
                 
             return redirect(url_for('index'))
 
-    return render_template('dashboard.html', vault_data=get_vault_data())
-
+    return render_template(
+    "dashboard.html",
+    vault_data={}
+    )
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
