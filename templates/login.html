@@ -2,24 +2,16 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
-    <title>CORE_MATRIX_V6.00 // AUTH</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Vault - Login</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/cinematic.css') }}">
 </head>
 <body>
     <div class="grid-bg"></div>
-    
+
     <div class="hud-overlay">
-        <h2>CORE_MATRIX_V6.00</h2>
-        <p>CLICK + DRAG ANYWHERE TO SPIN OBJECT 360° // ENGAGE RUNIC STONE FOR FOCUS BOUND</p>
-        <br>
-        <div class="data-stream">
-            REALM_STATE: CRITICAL_ELEVATION<br>
-            MAGMA_FLOW: DYNAMIC_73.48_RADS<br>
-            POLYGON_COUNT: 6 FACES (CLOSED CYLINDER)<br>
-            QI_RESONANCE: 1.0000_hz<br>
-            魂
-        </div>
+        <h2>SECURE VAULT</h2>
+        <p>Encrypted File Storage & Management</p>
     </div>
 
     {% with messages = get_flashed_messages(with_categories=true) %}
@@ -32,43 +24,24 @@
         {% endif %}
     {% endwith %}
 
-    <div class="viewport-3d" id="stage">
-        <div class="cylinder-pod" id="pod">
-            <div class="panel face-1">
-                <div class="panel-header">
-                    <h3>SECURE_GATE_01</h3>
-                    <span>PRIMARY AUTH TERMINAL</span>
-                </div>
-                <form method="POST" action="{{ url_for('login') }}">
-                    <div class="input-block">
-                        <label>USER INDEX</label>
-                        <input type="text" name="username" value="SYS_ADMIN" onfocus="isolateInput()">
-                    </div>
-                    <div class="input-block">
-                        <label>CIPHER KEY</label>
-                        <input type="password" name="password" placeholder="********" onfocus="isolateInput()">
-                    </div>
-                    <button type="submit" class="action-trigger">INITIALIZE NODE</button>
-                </form>
+    <div class="viewport-3d">
+        <div class="panel">
+            <div class="panel-header">
+                <h3>Sign In</h3>
+                <span>Access Your Secure Vault</span>
             </div>
-            
-            <div class="panel face-2"></div>
-            <div class="panel face-3"></div>
-            <div class="panel face-4"></div>
-            <div class="panel face-5"></div>
-            <div class="panel face-6"></div>
+            <form method="POST" action="{{ url_for('login') }}">
+                <div class="input-block">
+                    <label>Username</label>
+                    <input type="text" name="username" value="SYS_ADMIN" required>
+                </div>
+                <div class="input-block">
+                    <label>Password</label>
+                    <input type="password" name="password" placeholder="Enter password" required>
+                </div>
+                <button type="submit" class="action-trigger">Sign In</button>
+            </form>
         </div>
     </div>
-
-    <div class="telemetry-deck">
-        DB_CLUSTER_06<br><br>
-        MEMPOOL REPLICATION<br><br>
-        001.0.995.SEC // bound<br>
-        1.0.0.11 // loopback<br>
-        0.221.725.RES // active<br>
-        X: <span id="tele-x">0°</span> Y: <span id="tele-y">0°</span>
-    </div>
-
-    <script src="{{ url_for('static', filename='js/vectorEngine.js') }}"></script>
 </body>
 </html>
