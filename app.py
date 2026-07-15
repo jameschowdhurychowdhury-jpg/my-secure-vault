@@ -9,10 +9,11 @@ app = Flask(__name__)
 app.secret_key = 'cyber_secure_vault_secret'
 
 # Configure session cookies for proper cross-browser and Render compatibility
-app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+app.config['SESSION_COOKIE_SAMESITE'] = 'None'  # Allow cross-site cookies
 app.config['SESSION_COOKIE_HTTPONLY'] = True
-app.config['SESSION_COOKIE_SECURE'] = False  # Set to True if using HTTPS only
+app.config['SESSION_COOKIE_SECURE'] = True  # Set to True for HTTPS (Render uses HTTPS)
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=7)
+app.config['SESSION_COOKIE_NAME'] = 'secure_vault_session'
 
 B2_ENDPOINT_URL = os.environ.get('B2_ENDPOINT_URL', 'https://s3.us-east-005.backblazeb2.com')
 B2_KEY_ID = os.environ.get('B2_KEY_ID', 'YOUR_B2_KEY_ID')
