@@ -6,13 +6,18 @@ from werkzeug.utils import secure_filename
 from datetime import timedelta
 
 app = Flask(__name__)
-app.secret_key = 'cyber_secure_vault_secret'
+app.config["SECRET_KEY"] = os.environ.get(
+    "SECRET_KEY",
+    "cyber_secure_vault_secret"
+)
 
 # Configure session cookies for proper cross-browser and Render compatibility
-app.config['SESSION_COOKIE_SAMESITE'] = 'None'  # Allow cross-site cookies
-app.config['SESSION_COOKIE_HTTPONLY'] = False
-app.config['SESSION_COOKIE_SECURE'] = True  # Set to True for HTTPS (Render uses HTTPS)
-app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=7)
+app.config.update(
+    SESSION_COOKIE_SECURE=True,
+    SESSION_COOKIE_HTTPONLY=True,
+    SESSION_COOKIE_SAMESITE="Lax",
+    PERMANENT_SESSION_LIFETIME=timedelta(days=7),
+)
 app.config['SESSION_COOKIE_NAME'] = 'secure_vault_session'
 
 B2_ENDPOINT_URL = os.environ.get('B2_ENDPOINT_URL', 'https://s3.us-east-005.backblazeb2.com')
@@ -20,14 +25,22 @@ B2_KEY_ID = os.environ.get('B2_KEY_ID', 'YOUR_B2_KEY_ID')
 B2_APPLICATION_KEY = os.environ.get('B2_APPLICATION_KEY', 'YOUR_B2_APPLICATION_KEY')
 B2_BUCKET_NAME = os.environ.get('B2_BUCKET_NAME', 'YOUR_BUCKET_NAME')
 
+config = Config(
+    signature_version="s3v4",
+    connect_timeout=5,
+    read_timeout=10,
+    retries={
+        "max_attempts": 2
+    }
+)
+
 s3_client = boto3.client(
-    's3',
+    "s3",
     endpoint_url=B2_ENDPOINT_URL,
     aws_access_key_id=B2_KEY_ID,
     aws_secret_access_key=B2_APPLICATION_KEY,
-    config=Config(signature_version='s3v4')
+    config=config
 )
-
 EXTENSIONS_MAP = {
     'pictures': ['png', 'jpg', 'jpeg', 'gif'],
     'pdfs': ['pdf'],
@@ -71,6 +84,8 @@ def get_vault_data():
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
+    print("SESSION:", dict(session))
+
     if not session.get('logged_in'):
         return redirect(url_for('login'))
         
@@ -106,6 +121,7 @@ def login():
         if username == 'James' and password == '03102010':
             session.permanent = True
             session['logged_in'] = True
+            session.modified = True
             return redirect(url_for('index'))
         else:
             flash('Invalid username or password. Please try again.', 'error')
