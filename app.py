@@ -113,7 +113,7 @@ def index():
 
     return render_template(
     "dashboard.html",
-    vault_data={}
+    vault_data=get_vault_data()
     )
 @app.route('/login', methods=['GET', 'POST'])
 def login():
