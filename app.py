@@ -10,7 +10,7 @@ app.secret_key = 'cyber_secure_vault_secret'
 
 # Configure session cookies for proper cross-browser and Render compatibility
 app.config['SESSION_COOKIE_SAMESITE'] = 'None'  # Allow cross-site cookies
-app.config['SESSION_COOKIE_HTTPONLY'] = True
+app.config['SESSION_COOKIE_HTTPONLY'] = False
 app.config['SESSION_COOKIE_SECURE'] = True  # Set to True for HTTPS (Render uses HTTPS)
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=7)
 app.config['SESSION_COOKIE_NAME'] = 'secure_vault_session'
