@@ -4,43 +4,48 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Secure Vault - Login</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/cinematic.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/modern.css') }}">
 </head>
 <body>
-    <div class="grid-bg"></div>
-
-    <div class="hud-overlay">
-        <h2>SECURE VAULT</h2>
-        <p>Encrypted File Storage & Management</p>
-    </div>
-
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            <div class="alert-overlay">
-            {% for category, message in messages %}
-                <div class="alert-node {{ category }}">{{ message }}</div>
-            {% endfor %}
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <h1>🔐 Secure Vault</h1>
+                <p>Protected File Storage</p>
             </div>
-        {% endif %}
-    {% endwith %}
 
-    <div class="viewport-3d">
-        <div class="panel">
-            <div class="panel-header">
-                <h3>Sign In</h3>
-                <span>Access Your Secure Vault</span>
+            <div class="login-body">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        <div class="alert-container">
+                        {% for category, message in messages %}
+                            <div class="alert {{ category }}">
+                                {% if category == 'error' %}❌{% elif category == 'success' %}✅{% else %}ℹ️{% endif %}
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+
+                <form method="POST" action="{{ url_for('login') }}" class="login-form">
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" name="username" value="SYS_ADMIN" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" placeholder="Enter password" required autofocus>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary login-submit">Sign In</button>
+                </form>
+
+                <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); text-align: center; color: var(--text-muted); font-size: 0.85rem;">
+                    <p>Demo credentials: Username: <strong>SYS_ADMIN</strong> | Password: <strong>password</strong></p>
+                </div>
             </div>
-            <form method="POST" action="{{ url_for('login') }}">
-                <div class="input-block">
-                    <label>Username</label>
-                    <input type="text" name="username" value="SYS_ADMIN" required>
-                </div>
-                <div class="input-block">
-                    <label>Password</label>
-                    <input type="password" name="password" placeholder="Enter password" required>
-                </div>
-                <button type="submit" class="action-trigger">Sign In</button>
-            </form>
         </div>
     </div>
 </body>
