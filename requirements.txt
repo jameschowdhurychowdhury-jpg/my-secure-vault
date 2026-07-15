@@ -1,3 +1,5 @@
-Flask==3.0.2
-boto3==1.34.50
-werkzeug==3.0.1
+Flask
+gunicorn
+boto3
+botocore
+Werkzeug
