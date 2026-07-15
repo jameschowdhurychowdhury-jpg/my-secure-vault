@@ -117,20 +117,34 @@ def index():
     )
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    print("Method:", request.method)
+
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
+
+        print("Username:", username)
+        print("Password entered:", password)
+
         if username == 'James' and password == '03102010':
+            print("LOGIN SUCCESS")
+
             session.permanent = True
             session['logged_in'] = True
             session.modified = True
+
+            print("Session after login:", dict(session))
+
             return redirect(url_for('index'))
         else:
-            flash('Invalid username or password. Please try again.', 'error')
+            print("LOGIN FAILED")
+            flash('Invalid username or password.', 'error')
+
     return render_template('login.html')
 
 @app.route('/download')
 def download_file():
+    print("Index session:", dict(session))
     if not session.get('logged_in'):
         return redirect(url_for('login'))
     
