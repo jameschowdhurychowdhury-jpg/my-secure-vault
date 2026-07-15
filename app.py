@@ -8,7 +8,7 @@ from datetime import timedelta
 app = Flask(__name__)
 app.secret_key = 'cyber_secure_vault_secret'
 
-# FIX: Configure session cookies for proper cross-browser and Render compatibility
+# Configure session cookies for proper cross-browser and Render compatibility
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['SESSION_COOKIE_SECURE'] = False  # Set to True if using HTTPS only
@@ -89,9 +89,9 @@ def index():
             
             try:
                 s3_client.upload_fileobj(file, B2_BUCKET_NAME, b2_key, ExtraArgs={'ContentType': file.content_type})
-                flash(f'File successfully locked into B2 Cloud Category "{category.capitalize()}"!', 'success')
+                flash(f'File successfully uploaded to "{category.capitalize()}"!', 'success')
             except Exception as e:
-                flash(f'Matrix upload interrupted: {str(e)}', 'error')
+                flash(f'Upload failed: {str(e)}', 'error')
                 
             return redirect(url_for('index'))
 
@@ -102,12 +102,12 @@ def login():
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
-        if username == 'SYS_ADMIN' and password == 'password':
+        if username == 'James' and password == '03102010':
             session.permanent = True
             session['logged_in'] = True
             return redirect(url_for('index'))
         else:
-            flash('ACCESS DENIED: Invalid Matrix Cipher Key credentials.', 'error')
+            flash('Invalid username or password. Please try again.', 'error')
     return render_template('login.html')
 
 @app.route('/download')
@@ -128,7 +128,7 @@ def download_file():
                      "Content-Type": file_obj.get('ContentType', 'application/octet-stream')}
         )
     except Exception as e:
-        flash(f'Unable to stream file node: {str(e)}', 'error')
+        flash(f'Download failed: {str(e)}', 'error')
         return redirect(url_for('index'))
 
 @app.route('/view')
@@ -142,14 +142,13 @@ def view_file():
         
     try:
         file_obj = s3_client.get_object(Bucket=B2_BUCKET_NAME, Key=b2_key)
-        # Use inline rather than attachment to load within native browser architecture
         return Response(
             file_obj['Body'].read(),
             headers={"Content-Disposition": "inline",
                      "Content-Type": file_obj.get('ContentType', 'application/octet-stream')}
         )
     except Exception as e:
-        flash(f'Unable to render view channel: {str(e)}', 'error')
+        flash(f'View failed: {str(e)}', 'error')
         return redirect(url_for('index'))
 
 @app.route('/delete', methods=['POST'])
@@ -163,16 +162,16 @@ def delete_file():
         
     try:
         s3_client.delete_object(Bucket=B2_BUCKET_NAME, Key=b2_key)
-        flash('File removed successfully from core Backblaze matrix cluster.', 'success')
+        flash('File deleted successfully.', 'success')
     except Exception as e:
-        flash(f'Error processing purge command: {str(e)}', 'error')
+        flash(f'Delete failed: {str(e)}', 'error')
         
     return redirect(url_for('index'))
 
 @app.route('/logout')
 def logout():
     session.clear()
-    flash('Vault localized locks engaged. Session wiped.', 'success')
+    flash('Logged out successfully.', 'success')
     return redirect(url_for('login'))
 
 if __name__ == '__main__':
