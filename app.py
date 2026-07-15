@@ -3,9 +3,16 @@ import boto3
 from botocore.client import Config
 from flask import Flask, render_template, request, redirect, url_for, flash, session, Response
 from werkzeug.utils import secure_filename
+from datetime import timedelta
 
 app = Flask(__name__)
 app.secret_key = 'cyber_secure_vault_secret'
+
+# FIX: Configure session cookies for proper cross-browser and Render compatibility
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+app.config['SESSION_COOKIE_HTTPONLY'] = True
+app.config['SESSION_COOKIE_SECURE'] = False  # Set to True if using HTTPS only
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=7)
 
 B2_ENDPOINT_URL = os.environ.get('B2_ENDPOINT_URL', 'https://s3.us-east-005.backblazeb2.com')
 B2_KEY_ID = os.environ.get('B2_KEY_ID', 'YOUR_B2_KEY_ID')
@@ -96,6 +103,7 @@ def login():
         username = request.form.get('username')
         password = request.form.get('password')
         if username == 'SYS_ADMIN' and password == 'password':
+            session.permanent = True
             session['logged_in'] = True
             return redirect(url_for('index'))
         else:
