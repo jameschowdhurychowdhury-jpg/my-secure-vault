@@ -200,7 +200,68 @@ def delete_file():
         flash(f'Delete failed: {str(e)}', 'error')
         
     return redirect(url_for('index'))
+    
+@app.route('/rename', methods=['POST'])
+def rename_file():
+    if not session.get('logged_in'):
+        return redirect(url_for('login'))
 
+    old_key = request.form.get('old_key')
+    new_name = request.form.get('new_name', '').strip()
+
+    if not old_key or not new_name:
+        flash("Please enter a valid filename.", "error")
+        return redirect(url_for('index'))
+
+    # Secure filename
+    new_name = secure_filename(new_name)
+
+    # Keep original extension
+    old_filename = old_key.split('/')[-1]
+    old_ext = os.path.splitext(old_filename)[1]
+
+    if not new_name.lower().endswith(old_ext.lower()):
+        new_name += old_ext
+
+    category = old_key.split('/')[0]
+    new_key = f"{category}/{new_name}"
+
+    try:
+        # Prevent duplicate names
+        try:
+            s3_client.head_object(
+                Bucket=B2_BUCKET_NAME,
+                Key=new_key
+            )
+
+            flash("A file with that name already exists.", "error")
+            return redirect(url_for('index'))
+
+        except:
+            pass
+
+        # Copy object
+        s3_client.copy_object(
+            Bucket=B2_BUCKET_NAME,
+            CopySource={
+                "Bucket": B2_BUCKET_NAME,
+                "Key": old_key
+            },
+            Key=new_key
+        )
+
+        # Delete original
+        s3_client.delete_object(
+            Bucket=B2_BUCKET_NAME,
+            Key=old_key
+        )
+
+        flash("File renamed successfully!", "success")
+
+    except Exception as e:
+        flash(f"Rename failed: {str(e)}", "error")
+
+    return redirect(url_for('index'))
 @app.route('/logout')
 def logout():
     session.clear()
