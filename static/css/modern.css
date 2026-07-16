@@ -359,9 +359,8 @@ input[type="file"]:hover {
 /* ===== FILE GRID ===== */
 .file-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 1.5rem;
-    margin-bottom: 2rem;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
 }
 
 .file-card {
@@ -624,5 +623,30 @@ input[type="file"]:hover {
 
     .alert {
         padding: 0.75rem 1rem;
+    }
+}
+@media (max-width: 768px) {
+
+    .file-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .file-card {
+        width: 100%;
+    }
+
+    .file-actions {
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+        flex-wrap: nowrap;
+    }
+
+    .file-actions .btn {
+        flex: 1;
+    }
+
+    .file-name {
+        word-break: break-word;
     }
 }
