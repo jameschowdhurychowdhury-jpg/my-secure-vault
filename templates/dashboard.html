@@ -102,15 +102,54 @@
                                         <div class="file-name" title="{{ file.filename }}">{{ file.filename }}</div>
                                         <div class="file-type">{{ category }}</div>
                                         <div class="file-actions">
-                                            <a href="{{ url_for('view_file', key=file.key) }}" target="_blank" class="btn btn-success btn-sm" title="View">👁️</a>
-                                            <a href="{{ url_for('download_file', key=file.key) }}" class="btn btn-primary btn-sm" title="Download">⬇️</a>
-                                            <form action="{{ url_for('delete_file') }}" method="POST" style="flex: 1;" onsubmit="return confirm('Delete this file? This action cannot be undone.');">
-                                                <input type="hidden" name="key" value="{{ file.key }}">
-                                                <button type="submit" class="btn btn-danger btn-sm" style="width: 100%;" title="Delete">🗑️</button>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
+
+    <!-- View -->
+    <a href="{{ url_for('view_file', key=file.key) }}"
+       target="_blank"
+       class="btn btn-success btn-sm"
+       title="View">
+       👁️
+    </a>
+
+    <!-- Download -->
+    <a href="{{ url_for('download_file', key=file.key) }}"
+       class="btn btn-primary btn-sm"
+       title="Download">
+       ⬇️
+    </a>
+
+    <!-- Rename -->
+    <button
+        type="button"
+        class="btn btn-warning btn-sm"
+        title="Rename"
+        onclick="renameFile('{{ file.key }}','{{ file.filename }}')">
+        ✏️
+    </button>
+
+    <!-- Delete -->
+    <form action="{{ url_for('delete_file') }}"
+          method="POST"
+          style="flex:1;"
+          onsubmit="return confirm('Delete this file?');">
+
+        <input type="hidden"
+               name="key"
+               value="{{ file.key }}">
+
+        <button
+            type="submit"
+            class="btn btn-danger btn-sm"
+            style="width:100%;"
+            title="Delete">
+
+            🗑️
+
+        </button>
+
+    </form>
+
+</div>
                             {% endfor %}
                         </div>
                     {% else %}
@@ -145,5 +184,42 @@
             }
         }
     </script>
+     <script>
+function renameFile(oldKey, oldFilename) {
+
+    let filename = oldFilename;
+
+    // Remove extension for editing
+    if (filename.lastIndexOf('.') !== -1) {
+        filename = filename.substring(0, filename.lastIndexOf('.'));
+    }
+
+    const newName = prompt("Enter new filename:", filename);
+
+    if (!newName) {
+        return;
+    }
+
+    const form = document.createElement("form");
+    form.method = "POST";
+    form.action = "{{ url_for('rename_file') }}";
+
+    const oldInput = document.createElement("input");
+    oldInput.type = "hidden";
+    oldInput.name = "old_key";
+    oldInput.value = oldKey;
+
+    const newInput = document.createElement("input");
+    newInput.type = "hidden";
+    newInput.name = "new_name";
+    newInput.value = newName;
+
+    form.appendChild(oldInput);
+    form.appendChild(newInput);
+
+    document.body.appendChild(form);
+    form.submit();
+}
+     </script>               
 </body>
 </html>
