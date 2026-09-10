@@ -149,9 +149,9 @@ def index():
                     b2_key, 
                     ExtraArgs={'ContentType': file.content_type}
                 )
-                flash(f'✅ File successfully uploaded to "{category.capitalize()}"!', 'success')
+                flash(f'File successfully uploaded to "{category.capitalize()}"!', 'success')
             except Exception as e:
-                flash(f'❌ Upload failed: {str(e)}', 'error')
+                flash(f'Upload failed: {str(e)}', 'error')
                 
             return redirect(url_for('index'))
 
@@ -172,10 +172,10 @@ def login():
             session['logged_in'] = True
             session.modified = True
 
-            flash('✅ Welcome back! Vault unlocked.', 'success')
+            flash('Welcome back! Vault unlocked.', 'success')
             return redirect(url_for('index'))
         else:
-            flash('❌ Invalid username or password.', 'error')
+            flash('Invalid username or password.', 'error')
 
     return render_template('login.html')
 
@@ -198,7 +198,7 @@ def view_file():
             }
         )
     except Exception as e:
-        flash(f'❌ View failed: {str(e)}', 'error')
+        flash(f'View failed: {str(e)}', 'error')
         return redirect(url_for('index'))
 
 @app.route('/download')
@@ -221,7 +221,7 @@ def download_file():
             }
         )
     except Exception as e:
-        flash(f'❌ Download failed: {str(e)}', 'error')
+        flash(f'Download failed: {str(e)}', 'error')
         return redirect(url_for('index'))
 
 @app.route('/delete', methods=['POST'])
@@ -231,15 +231,15 @@ def delete_file():
     
     b2_key = request.form.get('key')
     if not b2_key:
-        flash('❌ No file specified for deletion.', 'error')
+        flash('No file specified for deletion.', 'error')
         return redirect(url_for('index'))
         
     try:
         s3_client.delete_object(Bucket=B2_BUCKET_NAME, Key=b2_key)
         filename = b2_key.split('/')[-1]
-        flash(f'✅ File "{filename}" deleted successfully.', 'success')
+        flash(f'File "{filename}" deleted successfully.', 'success')
     except Exception as e:
-        flash(f'❌ Delete failed: {str(e)}', 'error')
+        flash(f'Delete failed: {str(e)}', 'error')
         
     return redirect(url_for('index'))
 
@@ -252,7 +252,7 @@ def rename_file():
     new_name = request.form.get('new_name', '').strip()
 
     if not old_key or not new_name:
-        flash("❌ Please enter a valid filename.", "error")
+        flash("Please enter a valid filename.", "error")
         return redirect(url_for('index'))
 
     # Secure filename
@@ -275,7 +275,7 @@ def rename_file():
                 Bucket=B2_BUCKET_NAME,
                 Key=new_key
             )
-            flash("❌ A file with that name already exists.", "error")
+            flash("A file with that name already exists.", "error")
             return redirect(url_for('index'))
         except:
             pass
@@ -296,10 +296,10 @@ def rename_file():
             Key=old_key
         )
 
-        flash(f"✅ File renamed successfully!", "success")
+        flash("File renamed successfully!", "success")
 
     except Exception as e:
-        flash(f"❌ Rename failed: {str(e)}", "error")
+        flash(f"Rename failed: {str(e)}", "error")
 
     return redirect(url_for('index'))
 
@@ -351,19 +351,19 @@ def get_stats():
 def logout():
     """Logout user"""
     session.clear()
-    flash('✅ Logged out successfully. Vault locked.', 'success')
+    flash('Logged out successfully. Vault locked.', 'success')
     return redirect(url_for('login'))
 
 @app.errorhandler(404)
 def not_found(error):
     """Handle 404 errors"""
-    flash('❌ Page not found.', 'error')
+    flash('Page not found.', 'error')
     return redirect(url_for('index') if session.get('logged_in') else url_for('login'))
 
 @app.errorhandler(500)
 def server_error(error):
     """Handle 500 errors"""
-    flash('❌ An unexpected error occurred.', 'error')
+    flash('An unexpected error occurred.', 'error')
     return redirect(url_for('index') if session.get('logged_in') else url_for('login'))
 
 if __name__ == '__main__':
